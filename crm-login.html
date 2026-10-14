@@ -1,0 +1,63 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="theme-color" content="#073b36">
+<meta name="description" content="Meeqan Travel & Tours CRM demo login.">
+<title>CRM Login | Meeqan Travel & Tours</title>
+<link rel="icon" type="image/svg+xml" href="assets/images/meeqan-mark.svg">
+<link rel="stylesheet" href="assets/css/style.css">
+<style>
+.crm-wrap{min-height:65vh;display:grid;place-items:center;padding:56px 18px;background:linear-gradient(135deg,#f4f8f6,#fff)}
+.crm-card{width:min(100%,480px);background:#fff;border:1px solid #dce7e2;border-radius:22px;padding:clamp(24px,5vw,42px);box-shadow:0 18px 55px rgba(7,59,54,.12)}
+.crm-card h1{margin:0 0 8px;color:#073b36;font-size:clamp(28px,4vw,36px)}
+.crm-card p{color:#52645f;line-height:1.65}
+.crm-card label{display:block;font-weight:650;margin:18px 0 7px;color:#183d37}
+.crm-card input{width:100%;padding:13px 14px;border:1px solid #cbd9d3;border-radius:10px;font:inherit;box-sizing:border-box}
+.crm-card button{width:100%;margin-top:20px;border:0;border-radius:10px;background:#073b36;color:#fff;padding:14px;font:inherit;font-weight:700;cursor:pointer}
+.crm-note{background:#f5f8f6;border-radius:10px;padding:12px 14px;font-size:14px}
+.crm-error{color:#a12a2a!important;min-height:1.4em;font-weight:600}
+.crm-warning{border-left:4px solid #c59a42;padding:10px 12px;background:#fff9e9;font-size:13px}
+</style>
+</head>
+<body id="top">
+<div class="topbar"><div class="container topbar-inner"><span>Thoughtful journeys. Trusted guidance.</span><div><a href="mailto:info.meeqanofficial@gmail.com">info.meeqanofficial@gmail.com</a><span class="top-sep">|</span><a href="https://wa.me/923097570707" target="_blank" rel="noopener noreferrer">WhatsApp: 03097570707</a></div></div></div>
+<header class="site-header"><div class="container nav-wrap">
+<a class="brand" href="index.html" aria-label="Meeqan Travel & Tours home"><img src="assets/images/meeqan-logo.svg" alt="Meeqan Travel & Tours logo"></a>
+<button class="menu-toggle" id="menuToggle" aria-label="Open navigation" aria-expanded="false">☰</button>
+<nav class="main-nav" id="mainNav">
+<a href="index.html">Home</a><a href="about-us.html">About Us</a>
+<a href="hotels.html">Hotels</a><a href="umrah-packages.html">Hajj &amp; Umrah</a>
+<a href="services.html">Services</a><a href="our-companies.html">Our Companies</a>
+<a href="careers.html">Careers</a><a href="contact-us.html">Contact Us</a>
+<a class="nav-cta" href="crm-login.html" aria-current="page">CRM Login ↗</a>
+</nav></div></header>
+<main class="crm-wrap"><section class="crm-card">
+<p class="eyebrow">TEAM ACCESS</p><h1>CRM Login</h1>
+<p>Sign in to open the Meeqan admin preview dashboard.</p>
+<div class="crm-note"><strong>Temporary demo login</strong><br>Username: <code>meeqanadmin</code><br>Password: <code>Meeqan@123</code></div>
+<form id="crmLoginForm">
+<label for="username">Username</label><input id="username" name="username" autocomplete="username" required>
+<label for="password">Password</label><input id="password" name="password" type="password" autocomplete="current-password" required>
+<p class="crm-error" id="loginError" role="alert" aria-live="polite"></p>
+<button type="submit">Login to CRM</button>
+</form>
+<p class="crm-warning">Demo only: these credentials are stored in front-end code and are not secure. Do not use real customer or payment data. A production CRM needs server-side authentication before public use.</p>
+</section></main>
+<footer class="site-footer"><div class="container footer-bottom"><span>© <span id="year"></span> Meeqan Travel &amp; Tours</span><a href="index.html">Back to website</a></div></footer>
+<script src="assets/js/main.js"></script>
+<script>
+document.getElementById('year').textContent = new Date().getFullYear();
+document.getElementById('crmLoginForm').addEventListener('submit', function(event){
+ event.preventDefault();
+ const username=document.getElementById('username').value.trim();
+ const password=document.getElementById('password').value;
+ if(username==='meeqanadmin' && password==='Meeqan@123'){
+   window.location.href='Admin/index.html';
+ } else {
+   document.getElementById('loginError').textContent='Login details do not match. Please use the temporary demo credentials shown above.';
+ }
+});
+</script>
+</body></html>
