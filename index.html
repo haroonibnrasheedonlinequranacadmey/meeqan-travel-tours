@@ -28,12 +28,22 @@
     @media(max-width:560px){.home-quick-links,.destination-grid,.why-grid,.steps-grid{grid-template-columns:1fr}.destination-card:first-child{grid-column:auto}.destination-card{min-height:240px}.home-quick-link{padding:14px}.why-card{padding:21px}}
 
     .mee-highlight-section{background:#fff}
-    .mee-hotel-list{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:12px;margin-top:24px}
-    .mee-hotel-item{border:1px solid var(--line);background:#fff;padding:16px 17px;display:flex;gap:12px;align-items:flex-start}
-    .mee-hotel-pin{width:34px;height:34px;flex:0 0 34px;display:grid;place-items:center;background:var(--cream);color:#a78247;font-size:17px}
-    .mee-hotel-item strong{display:block;font:500 15px var(--serif);color:var(--green)}
-    .mee-hotel-item small{display:block;color:var(--muted);font-size:10px;line-height:1.6;margin-top:4px}
+    /* Hotel highlight cards: consistent image, title and details alignment */
+    .mee-hotel-list{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:18px;margin-top:26px;align-items:stretch}
+    .mee-hotel-item{min-width:0;border:1px solid var(--line);background:#fff;padding:0;display:flex;flex-direction:column;gap:0;align-items:stretch;overflow:hidden;border-radius:4px;height:100%;box-shadow:0 4px 16px rgba(7,57,45,.045)}
+    .mee-hotel-photo{display:block;position:relative;width:100%;height:180px;flex:0 0 180px;overflow:hidden;background:#f1f0eb}
+    .mee-hotel-photo img{display:block;width:100%;height:100%;object-fit:cover;object-position:center;transition:transform .35s ease}
+    .mee-hotel-photo:hover img{transform:scale(1.04)}
+    .mee-hotel-copy{display:flex;flex-direction:column;align-items:flex-start;gap:0;padding:16px;min-width:0;flex:1}
+    .mee-hotel-item strong{display:block;width:100%;font:500 17px/1.35 var(--serif);color:var(--green);margin:0 0 7px;overflow-wrap:anywhere}
+    .mee-hotel-item strong a{color:inherit;text-decoration:none;display:inline}
+    .mee-hotel-item strong a:hover{text-decoration:underline;text-underline-offset:3px}
+    .mee-hotel-item small{display:block;color:var(--muted);font-size:11px;line-height:1.55;margin:0 0 13px;min-height:34px}
+    .mee-hotel-details-link{display:inline-block;margin-top:auto;color:var(--green);font-size:11px;font-weight:600;line-height:1.5;text-decoration:none;border-bottom:1px solid #cbb68e;padding-bottom:3px}
+    .mee-hotel-details-link:hover{color:#a78247}
     .mee-note{font-size:11px;color:var(--muted);margin-top:16px;line-height:1.7}
+    @media(max-width:900px){.mee-hotel-list{grid-template-columns:repeat(2,minmax(0,1fr));gap:15px}.mee-hotel-photo{height:170px;flex-basis:170px}}
+    @media(max-width:560px){.mee-hotel-list{grid-template-columns:1fr;gap:14px}.mee-hotel-item{display:grid;grid-template-columns:120px minmax(0,1fr);align-items:stretch}.mee-hotel-photo{height:100%;min-height:150px;flex-basis:auto}.mee-hotel-copy{padding:13px}.mee-hotel-item strong{font-size:16px}.mee-hotel-item small{min-height:0;margin-bottom:10px;font-size:10px}}
     .mee-solutions-section{background:var(--cream)}
     .mee-solutions-grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:16px}
     .mee-solution-card{background:#fff;border:1px solid #e7e4da;padding:22px 20px;min-height:185px;display:flex;flex-direction:column}
