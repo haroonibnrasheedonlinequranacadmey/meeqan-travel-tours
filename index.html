@@ -8,6 +8,72 @@
   <title>Meeqan Travel & Tours | Hajj, Umrah & Travel</title>
   <link rel="icon" type="image/svg+xml" href="assets/images/meeqan-mark.svg">
   <link rel="stylesheet" href="assets/css/style.css">
+
+  <style id="home-enhancements">
+    .home-quick-links{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:14px;margin-top:28px}
+    .home-quick-link{display:flex;align-items:center;gap:12px;padding:17px 16px;background:#fff;border:1px solid #e3e7df;text-decoration:none;color:var(--green);box-shadow:0 8px 24px rgba(16,44,37,.05);transition:transform .2s,border-color .2s}
+    .home-quick-link:hover{transform:translateY(-3px);border-color:var(--gold)}
+    .home-quick-icon{width:42px;height:42px;flex:0 0 42px;display:grid;place-items:center;background:var(--cream);color:#a78247;font-size:21px}
+    .home-quick-link strong{display:block;font:500 17px var(--serif)}.home-quick-link small{display:block;font-size:10px;color:var(--muted);margin-top:3px}
+    .destination-section{background:#fff}.destination-grid{display:grid;grid-template-columns:1.2fr 1fr 1fr;gap:18px}
+    .destination-card{position:relative;min-height:280px;overflow:hidden;background:#dfe5df;color:#fff;text-decoration:none;display:flex;align-items:end}
+    .destination-card img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;transition:transform .5s}
+    .destination-card:hover img{transform:scale(1.05)}.destination-card:after{content:"";position:absolute;inset:0;background:linear-gradient(180deg,transparent 20%,rgba(0,25,22,.78))}
+    .destination-caption{position:relative;z-index:1;padding:23px;width:100%}.destination-caption small{font-size:9px;letter-spacing:.15em;color:#ead8b6}.destination-caption h3{font:500 27px var(--serif);margin:5px 0}.destination-caption span{font-size:11px}
+    .why-section{background:var(--cream)}.why-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:18px}.why-card{background:#fff;border:1px solid #e8e8df;padding:25px 22px}.why-card .why-icon{font-size:25px;color:#a78247}.why-card h3{font:500 20px var(--serif);color:var(--green);margin:12px 0 7px}.why-card p{font-size:11px;color:var(--muted)}
+    .steps-section{background:#fff}.steps-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:20px}.step-card{border-top:1px solid var(--line);padding-top:19px}.step-card>span{font:500 30px var(--serif);color:#b08b4e}.step-card h3{font:500 19px var(--serif);color:var(--green);margin:9px 0}.step-card p{font-size:11px;color:var(--muted)}
+    .home-faq{max-width:850px;margin:0 auto}.home-faq details{border-bottom:1px solid var(--line);padding:18px 2px}.home-faq summary{cursor:pointer;list-style:none;font:500 19px var(--serif);color:var(--green);display:flex;justify-content:space-between;gap:15px}.home-faq summary:after{content:"+";font:20px var(--sans);color:#a78247}.home-faq details[open] summary:after{content:"−"}.home-faq details p{font-size:12px;color:var(--muted);padding-top:12px;max-width:760px}
+    .section-heading .text-link{white-space:nowrap}
+    @media(max-width:900px){.home-quick-links{grid-template-columns:repeat(2,1fr)}.destination-grid{grid-template-columns:1fr 1fr}.destination-card:first-child{grid-column:1/-1}.why-grid,.steps-grid{grid-template-columns:repeat(2,1fr)}}
+    @media(max-width:560px){.home-quick-links,.destination-grid,.why-grid,.steps-grid{grid-template-columns:1fr}.destination-card:first-child{grid-column:auto}.destination-card{min-height:240px}.home-quick-link{padding:14px}.why-card{padding:21px}}
+
+    .mee-highlight-section{background:#fff}
+    .mee-hotel-list{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:12px;margin-top:24px}
+    .mee-hotel-item{border:1px solid var(--line);background:#fff;padding:16px 17px;display:flex;gap:12px;align-items:flex-start}
+    .mee-hotel-pin{width:34px;height:34px;flex:0 0 34px;display:grid;place-items:center;background:var(--cream);color:#a78247;font-size:17px}
+    .mee-hotel-item strong{display:block;font:500 15px var(--serif);color:var(--green)}
+    .mee-hotel-item small{display:block;color:var(--muted);font-size:10px;line-height:1.6;margin-top:4px}
+    .mee-note{font-size:11px;color:var(--muted);margin-top:16px;line-height:1.7}
+    .mee-solutions-section{background:var(--cream)}
+    .mee-solutions-grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:16px}
+    .mee-solution-card{background:#fff;border:1px solid #e7e4da;padding:22px 20px;min-height:185px;display:flex;flex-direction:column}
+    .mee-solution-card .solution-icon{font-size:25px;color:#a78247}
+    .mee-solution-card h3{font:500 19px var(--serif);color:var(--green);margin:12px 0 7px}
+    .mee-solution-card p{font-size:11px;color:var(--muted);line-height:1.7;flex:1}
+    .mee-solution-card a{font-size:11px;color:var(--green);text-decoration:none;font-weight:600;margin-top:13px}
+    .mee-crm-section{background:#073b36;color:#fff;position:relative;overflow:hidden}
+    .mee-crm-grid{display:grid;grid-template-columns:1.05fr 1fr;gap:40px;align-items:center}
+    .mee-crm-section h2,.mee-crm-section h3{color:#fff}
+    .mee-crm-section p{color:rgba(255,255,255,.78)}
+    .mee-crm-features{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}
+    .mee-crm-feature{padding:18px;border:1px solid rgba(255,255,255,.18);background:rgba(255,255,255,.06)}
+    .mee-crm-feature strong{display:block;color:#e8d3a7;font:500 16px var(--serif);margin-bottom:5px}
+    .mee-crm-feature span{font-size:10px;line-height:1.6;color:rgba(255,255,255,.75)}
+    .mee-journey-seven{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:20px}
+    .mee-journey-step{padding:18px 0 0;border-top:1px solid var(--line)}
+    .mee-journey-step>span{font:500 28px var(--serif);color:#b08b4e}
+    .mee-journey-step h3{font:500 18px var(--serif);color:var(--green);margin:8px 0}
+    .mee-journey-step p{font-size:11px;color:var(--muted);line-height:1.7}
+    .mee-news-section{background:#f6f8f5}
+    .mee-news-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:18px}
+    .mee-news-card{background:#fff;border:1px solid var(--line);overflow:hidden}
+    .mee-news-card img{width:100%;height:175px;object-fit:cover;display:block}
+    .mee-news-body{padding:19px}
+    .mee-news-body small{font-size:9px;letter-spacing:.12em;color:#a78247;text-transform:uppercase}
+    .mee-news-body h3{font:500 20px var(--serif);color:var(--green);margin:8px 0}
+    .mee-news-body p{font-size:11px;color:var(--muted);line-height:1.7}
+    .mee-news-body a{display:inline-block;margin-top:12px;font-size:11px;color:var(--green);font-weight:600}
+    .mee-airline-section{background:#fff;border-top:1px solid var(--line);border-bottom:1px solid var(--line)}
+    .mee-airline-row{display:flex;flex-wrap:wrap;gap:12px;align-items:center;justify-content:space-between;margin-top:22px}
+    .mee-airline-name{padding:13px 18px;border:1px solid var(--line);background:#fff;color:var(--green);font:500 15px var(--serif);min-width:110px;text-align:center}
+    .mee-mini-banner{display:grid;grid-template-columns:1fr 1fr;gap:0;margin-top:30px;background:#eaf2ef}
+    .mee-mini-banner img{width:100%;height:100%;min-height:245px;object-fit:cover}
+    .mee-mini-banner-copy{padding:34px;align-self:center}
+    .mee-mini-banner-copy h3{font:500 27px var(--serif);color:var(--green);margin:8px 0}
+    .mee-mini-banner-copy p{font-size:12px;color:var(--muted);line-height:1.8}
+    @media(max-width:900px){.mee-hotel-list,.mee-solutions-grid{grid-template-columns:repeat(2,minmax(0,1fr))}.mee-crm-grid{grid-template-columns:1fr;gap:25px}.mee-journey-seven{grid-template-columns:repeat(2,minmax(0,1fr))}.mee-airline-row{justify-content:center}.mee-mini-banner{grid-template-columns:1fr}}
+    @media(max-width:560px){.mee-hotel-list,.mee-solutions-grid,.mee-news-grid,.mee-journey-seven{grid-template-columns:1fr}.mee-crm-features{grid-template-columns:1fr 1fr}.mee-mini-banner-copy{padding:23px}.mee-news-card img{height:200px}.mee-airline-name{flex:1 1 40%}}
+  </style>
 </head>
 <body>
   <div class="topbar">
@@ -40,6 +106,12 @@
         <div class="intro-text"><p>Whether you are preparing for Hajj or Umrah, looking for a comfortable hotel, or planning your next holiday, Meeqan Travel & Tours is here to make the process clear and convenient.</p><a class="text-link" href="#services">Discover our services <span>↗</span></a></div>
       </div>
       <div class="container promise-row"><div><span>01</span><strong>Personal guidance</strong><small>Support shaped around your needs</small></div><div><span>02</span><strong>Thoughtful options</strong><small>Choices for different travel styles</small></div><div><span>03</span><strong>Clear communication</strong><small>Helpful updates at every step</small></div></div>
+      <div class="container home-quick-links" aria-label="Quick travel links">
+        <a class="home-quick-link" href="hotels.html"><span class="home-quick-icon">⌂</span><span><strong>Hotels</strong><small>Makkah, Madinah & more</small></span></a>
+        <a class="home-quick-link" href="umrah-packages.html"><span class="home-quick-icon">☾</span><span><strong>Hajj & Umrah</strong><small>Explore sacred journeys</small></span></a>
+        <a class="home-quick-link" href="flights.html"><span class="home-quick-icon">✈</span><span><strong>Flights</strong><small>Request ticket options</small></span></a>
+        <a class="home-quick-link" href="tours.html"><span class="home-quick-icon">◎</span><span><strong>Holiday Tours</strong><small>Plan a custom trip</small></span></a>
+      </div>
     </section>
 
     <section class="journey-section section-pad" id="hajj-umrah">
@@ -65,6 +137,40 @@
       </div>
     </section>
 
+
+    <section class="mee-highlight-section section-pad" id="hotel-highlights">
+      <div class="container">
+        <div class="section-heading">
+          <div><p class="eyebrow"><span></span> HOLY CITY HOTEL DIRECTORY</p><h2>Explore stays in <em>Makkah & Madinah</em></h2></div>
+          <p>Tell us your dates, room needs and preferred location. These are hotel examples to enquire about; current availability, exact property details and rates must be confirmed before booking.</p>
+        </div>
+        <div class="mee-hotel-list">
+          <article class="mee-hotel-item"><span class="mee-hotel-pin">⌂</span><div><strong>Lolo Al Falah</strong><small>Makkah · Ibrahim Khalil Road area</small></div></article>
+          <article class="mee-hotel-item"><span class="mee-hotel-pin">⌂</span><div><strong>Dhaif Ajyad</strong><small>Makkah · Ajyad Street area</small></div></article>
+          <article class="mee-hotel-item"><span class="mee-hotel-pin">⌂</span><div><strong>Areej Al Wafa</strong><small>Makkah · Ibrahim Khalil Road area</small></div></article>
+          <article class="mee-hotel-item"><span class="mee-hotel-pin">⌂</span><div><strong>Nawara Al Shams 3</strong><small>Makkah · Hotel enquiry</small></div></article>
+          <article class="mee-hotel-item"><span class="mee-hotel-pin">⌂</span><div><strong>Rama Al Madinah</strong><small>Madinah · Markazia area</small></div></article>
+          <article class="mee-hotel-item"><span class="mee-hotel-pin">⌂</span><div><strong>Ergwan Al Madinah</strong><small>Madinah · South Markazia area</small></div></article>
+          <article class="mee-hotel-item"><span class="mee-hotel-pin">⌂</span><div><strong>Taif Nibras Hotel</strong><small>Madinah · South Markazia area</small></div></article>
+          <article class="mee-hotel-item"><span class="mee-hotel-pin">⌂</span><div><strong>Burj Muwaddah</strong><small>Madinah · Bab Al Salam Road area</small></div></article>
+        </div>
+        <p class="mee-note">Hotel names and area descriptions are examples based on the reference directory, not a statement of ownership or live availability by Meeqan Travel & Tours. Please reconfirm all details before payment.</p>
+        <div style="margin-top:20px;display:flex;gap:12px;flex-wrap:wrap"><a class="btn btn-dark" href="hotels.html">Open hotel directory <span>↗</span></a><a class="text-link" href="#booking">Ask about hotel options <span>↗</span></a></div>
+      </div>
+    </section>
+
+    <section class="destination-section section-pad" id="destinations">
+      <div class="container">
+        <div class="section-heading"><div><p class="eyebrow"><span></span> FIND YOUR NEXT EXPERIENCE</p><h2>Journeys worth <em>looking forward to</em></h2></div><p>From sacred travel to city breaks, tell us what you have in mind and we will help you explore suitable arrangements.</p></div>
+        <div class="destination-grid">
+          <a class="destination-card" href="umrah-packages.html"><img src="https://images.unsplash.com/photo-1564769625905-50e93615e769?auto=format&fit=crop&w=1200&q=85" alt="Masjid al-Haram in Makkah" loading="lazy"><span class="destination-caption"><small>SACRED JOURNEYS</small><h3>Makkah & Umrah</h3><span>Explore packages ↗</span></span></a>
+          <a class="destination-card" href="madinah-hotels.html"><img src="https://images.unsplash.com/photo-1591604129939-f1efa4d9f7fa?auto=format&fit=crop&w=900&q=85" alt="Madinah and mosque architecture" loading="lazy"><span class="destination-caption"><small>STAYS & VISITS</small><h3>Madinah</h3><span>Find accommodation ↗</span></span></a>
+          <a class="destination-card" href="tours.html"><img src="https://images.unsplash.com/photo-1512453979798-5ea266f8880c?auto=format&fit=crop&w=900&q=85" alt="Dubai skyline at dusk" loading="lazy"><span class="destination-caption"><small>INTERNATIONAL TOURS</small><h3>Explore the world</h3><span>Discover tour options ↗</span></span></a>
+        </div>
+        <p class="image-note">Destination photography is illustrative. Actual packages, travel dates, prices and availability must be confirmed with our team.</p>
+      </div>
+    </section>
+
     <section class="flight-section section-pad" id="flights">
       <div class="container flight-layout">
         <div class="flight-copy"><p class="eyebrow light"><span></span> FLY WITH CONFIDENCE</p><h2>Your next destination<br>is <em>closer than ever.</em></h2><p>Ask our team about flight options and ticketing support. Live airline/supplier search can be connected in a later development phase.</p><a class="btn btn-gold" href="#booking">Request flight options <span>↗</span></a><small class="demo-label">Flight offers shown here are not live inventory.</small></div>
@@ -87,9 +193,107 @@
       </div>
     </section>
 
+
+    <section class="mee-solutions-section section-pad" id="all-travel-solutions">
+      <div class="container">
+        <div class="section-heading"><div><p class="eyebrow"><span></span> ONE PLACE TO START</p><h2>More travel solutions, <em>one enquiry</em></h2></div><p>Choose the support you need and ask our team about suitable arrangements. Services, suppliers, eligibility and availability are confirmed individually.</p></div>
+        <div class="mee-solutions-grid">
+          <article class="mee-solution-card"><span class="solution-icon">☾</span><h3>Umrah & Hajj</h3><p>Ask about economy, standard, family and premium package styles, subject to current arrangements.</p><a href="umrah-packages.html">Explore packages ↗</a></article>
+          <article class="mee-solution-card"><span class="solution-icon">✈</span><h3>Flights & Ticketing</h3><p>Request route options, travel dates, passenger requirements and fare information.</p><a href="flights.html">Flight enquiries ↗</a></article>
+          <article class="mee-solution-card"><span class="solution-icon">⌂</span><h3>Hotels & Stays</h3><p>Explore accommodation enquiries for Makkah, Madinah and other destinations.</p><a href="hotels.html">Browse hotels ↗</a></article>
+          <article class="mee-solution-card"><span class="solution-icon">▤</span><h3>Visa Assistance</h3><p>Ask which documents and steps apply to your destination and travel purpose.</p><a href="umrah-visa.html">Visa information ↗</a></article>
+          <article class="mee-solution-card"><span class="solution-icon">➜</span><h3>Transport & Transfers</h3><p>Enquire about airport transfers, local transport and intercity arrangements.</p><a href="transport.html">Transport options ↗</a></article>
+          <article class="mee-solution-card"><span class="solution-icon">◎</span><h3>Ziyarat & Tours</h3><p>Discuss guided visits, historic places and international tour arrangements.</p><a href="tours.html">Explore tours ↗</a></article>
+          <article class="mee-solution-card"><span class="solution-icon">♧</span><h3>Travel Insurance</h3><p>Ask about travel protection options and whether a policy is suitable for your trip.</p><a href="#booking">Ask about coverage ↗</a></article>
+          <article class="mee-solution-card"><span class="solution-icon">◷</span><h3>Travel Partner Support</h3><p>Travel businesses can contact us to discuss supplier coordination and service enquiries.</p><a href="contact-us.html">Contact our team ↗</a></article>
+          <article class="mee-solution-card"><span class="solution-icon">◎</span><h3>Study Abroad Guidance</h3><p>Ask our team whether education-related travel guidance or referral support is available for your needs.</p><a href="contact-us.html">Ask about this service ↗</a></article>
+          <article class="mee-solution-card"><span class="solution-icon">↗</span><h3>Employment Solutions</h3><p>Send an enquiry if you need information about employment-related travel or documentation support.</p><a href="contact-us.html">Send an enquiry ↗</a></article>
+          <article class="mee-solution-card"><span class="solution-icon">▦</span><h3>Travel Technology</h3><p>Online live inventory, automated booking and supplier systems are not active on this starter site; ask us about current arrangements.</p><a href="contact-us.html">Contact Meeqan ↗</a></article>
+        </div>
+        <div class="mee-mini-banner">
+          <img src="https://images.unsplash.com/photo-1436491865332-7a61a109cc05?auto=format&fit=crop&w=1200&q=85" alt="Passenger aircraft flying above the clouds" loading="lazy">
+          <div class="mee-mini-banner-copy"><p class="eyebrow"><span></span> FROM DEPARTURE TO ARRIVAL</p><h3>Plan the details before you fly.</h3><p>Share your route, dates, traveller count and preferred services. Our team can help you discuss flight, hotel, transfer and visa requirements in one place.</p><a class="btn btn-dark" href="#booking">Start a travel enquiry <span>↗</span></a></div>
+        </div>
+      </div>
+    </section>
+
+
+    <section class="mee-crm-section section-pad" id="travel-partner-support">
+      <div class="container mee-crm-grid">
+        <div><p class="eyebrow light"><span></span> ORGANIZED TRAVEL SUPPORT</p><h2>Clear communication at <em>every step.</em></h2><p>From the first enquiry to the final itinerary, keep your travel details together and confirm important information before you make a booking.</p><a class="btn btn-gold" href="contact-us.html">Talk to Meeqan <span>↗</span></a></div>
+        <div class="mee-crm-features">
+          <div class="mee-crm-feature"><strong>One enquiry</strong><span>Share dates, destinations and requested services together.</span></div>
+          <div class="mee-crm-feature"><strong>Clear updates</strong><span>Ask for current prices, availability and next steps.</span></div>
+          <div class="mee-crm-feature"><strong>Travel details</strong><span>Keep confirmed itinerary and document requirements organized.</span></div>
+          <div class="mee-crm-feature"><strong>Supplier confirmation</strong><span>Live hotel inventory, airline booking and online payments are not connected on this starter website.</span></div>
+        </div>
+      </div>
+    </section>
+
+    <section class="why-section section-pad" id="why-meeqan">
+      <div class="container">
+        <div class="section-heading"><div><p class="eyebrow"><span></span> THE MEEQAN APPROACH</p><h2>Travel planning with <em>care</em></h2></div><p>Good planning starts with clear information and a team that listens to your needs.</p></div>
+        <div class="why-grid">
+          <article class="why-card"><span class="why-icon">✦</span><h3>Personal guidance</h3><p>Share your priorities and get help understanding the options that may suit your trip.</p></article>
+          <article class="why-card"><span class="why-icon">⌂</span><h3>Stay options</h3><p>Explore hotel directories for Makkah, Madinah and other accommodation enquiries.</p></article>
+          <article class="why-card"><span class="why-icon">✈</span><h3>Travel support</h3><p>Bring flights, transfers, visa assistance and tours together in one enquiry.</p></article>
+          <article class="why-card"><span class="why-icon">♡</span><h3>Clear next steps</h3><p>We explain what information is needed and help you follow up before confirming.</p></article>
+        </div>
+      </div>
+    </section>
+
+
+    <section class="steps-section section-pad" id="how-it-works">
+      <div class="container">
+        <div class="section-heading"><div><p class="eyebrow"><span></span> HOW YOUR JOURNEY WORKS</p><h2>From enquiry to <em>safe return</em></h2></div><p>These steps help you understand the process. Final arrangements depend on supplier confirmation, documents and your selected itinerary.</p></div>
+        <div class="mee-journey-seven">
+          <article class="mee-journey-step"><span>01</span><h3>Enquiry</h3><p>Share your travel dates, group size, budget and departure city.</p></article>
+          <article class="mee-journey-step"><span>02</span><h3>Package options</h3><p>Discuss package styles, hotel preferences, flights and inclusions.</p></article>
+          <article class="mee-journey-step"><span>03</span><h3>Review details</h3><p>Check price, availability, cancellation terms and what is included.</p></article>
+          <article class="mee-journey-step"><span>04</span><h3>Documentation</h3><p>Confirm required documents and the applicable visa process.</p></article>
+          <article class="mee-journey-step"><span>05</span><h3>Travel preparation</h3><p>Keep your confirmed tickets, hotel details and itinerary accessible.</p></article>
+          <article class="mee-journey-step"><span>06</span><h3>Stay & worship</h3><p>Follow the confirmed arrangements for transfers, accommodation and visits.</p></article>
+          <article class="mee-journey-step"><span>07</span><h3>Return journey</h3><p>Recheck return travel details and keep the relevant contact information with you.</p></article>
+        </div>
+      </div>
+    </section>
+
+    <section class="faq-section section-pad" id="home-faq">
+      <div class="container"><div class="section-heading"><div><p class="eyebrow"><span></span> QUICK ANSWERS</p><h2>Frequently asked <em>questions</em></h2></div><p>Need more detail? Send us your question and our team can guide you.</p></div>
+        <div class="home-faq">
+          <details><summary>How can I enquire about an Umrah or Hajj package?</summary><p>Use the travel enquiry form below, select Hajj or Umrah, and include your intended dates, number of travellers and any preferences. Our team can then discuss current options.</p></details>
+          <details><summary>Can I ask about Makkah and Madinah hotels?</summary><p>Yes. Visit the hotel directory or use the enquiry form to share your dates, room requirements and preferred location. Rates and availability need to be reconfirmed before booking.</p></details>
+          <details><summary>Can I request flight tickets, visa assistance or transport?</summary><p>Yes. Select the relevant service in the enquiry form and add your route, dates or requirements. The website form sends your request to WhatsApp; it does not itself issue tickets or visas.</p></details>
+          <details><summary>Does submitting an enquiry confirm my booking?</summary><p>No. An enquiry is a request for information only. Your booking is confirmed only after your team verifies availability, pricing, terms and required documents with you.</p></details>
+        </div>
+      </div>
+    </section>
+
+
+    <section class="mee-news-section section-pad" id="travel-guides">
+      <div class="container">
+        <div class="section-heading"><div><p class="eyebrow"><span></span> TRAVEL TIPS & GUIDES</p><h2>Useful information for <em>your journey</em></h2></div><p>Start with these practical topics, then contact us to discuss details specific to your trip.</p></div>
+        <div class="mee-news-grid">
+          <article class="mee-news-card"><img src="https://images.unsplash.com/photo-1564769625905-50e93615e769?auto=format&fit=crop&w=900&q=85" alt="The Grand Mosque in Makkah" loading="lazy"><div class="mee-news-body"><small>Hajj & Umrah</small><h3>Preparing for an Umrah trip</h3><p>Make a checklist for travel dates, documents, flights, hotel needs and local transport before confirming your plans.</p><a href="umrah-packages.html">Explore Umrah information ↗</a></div></article>
+          <article class="mee-news-card"><img src="https://images.unsplash.com/photo-1566073771259-6a8506099945?auto=format&fit=crop&w=900&q=85" alt="Comfortable hotel accommodation" loading="lazy"><div class="mee-news-body"><small>Hotels</small><h3>Choosing a hotel in the holy cities</h3><p>Compare location, room arrangements, transport options and the exact distance information before booking.</p><a href="hotels.html">Browse hotel options ↗</a></div></article>
+          <article class="mee-news-card"><img src="https://images.unsplash.com/photo-1436491865332-7a61a109cc05?auto=format&fit=crop&w=900&q=85" alt="Commercial aircraft in flight" loading="lazy"><div class="mee-news-body"><small>Flights & Travel</small><h3>What to share for a flight enquiry</h3><p>Include departure city, destination, dates, passenger count and baggage or timing preferences where relevant.</p><a href="flights.html">Ask about flights ↗</a></div></article>
+        </div>
+      </div>
+    </section>
+
+
+    <section class="mee-airline-section section-pad" id="airline-options">
+      <div class="container">
+        <div class="section-heading"><div><p class="eyebrow"><span></span> FLIGHT OPTIONS</p><h2>Ask about routes with <em>airline options</em></h2></div><p>Airlines shown are examples to help you describe your preferred route. Availability, fares and ticketing are confirmed at enquiry; this is not a live airline booking engine.</p></div>
+        <div class="mee-airline-row" aria-label="Example airlines">
+          <div class="mee-airline-name">PIA</div><div class="mee-airline-name">Saudia</div><div class="mee-airline-name">Qatar Airways</div><div class="mee-airline-name">Emirates</div><div class="mee-airline-name">Turkish Airlines</div><div class="mee-airline-name">flynas</div>
+        </div>
+      </div>
+    </section>
+
     <section class="booking-section section-pad" id="booking">
       <div class="container booking-layout"><div><p class="eyebrow"><span></span> LET'S PLAN IT</p><h2>Tell us about<br>your <em>trip.</em></h2><p class="booking-copy">Send your enquiry to Meeqan Travel & Tours. Our team can follow up to discuss options and availability.</p><div class="contact-detail"><span>WhatsApp / Phone</span><strong>03097570707</strong></div><div class="contact-detail"><span>Email</span><strong>info.meeqanofficial@gmail.com</strong></div></div>
-        <form class="booking-form" id="bookingForm"><div class="form-title"><h3>Travel enquiry</h3><span>We’ll be happy to help</span></div><div class="form-grid"><label>Full name<input name="name" required placeholder="Your name"></label><label>Phone / WhatsApp<input name="phone" required placeholder="03xx xxxxxxx"></label><label>Email (optional)<input name="email" type="email" placeholder="you@example.com"></label><label>Service<select name="service" required><option value="">Choose a service</option><option>Hajj package</option><option>Umrah package</option><option>Hotel / room booking</option><option>Flight tickets</option><option>International tour</option><option>Visa services</option><option>Airport transfer</option><option>Ziyarat / transport</option><option>Other</option></select></label><label class="full">Travel details<textarea name="details" rows="3" placeholder="Destination, dates, number of travellers, or any questions"></textarea></label></div><button class="btn btn-dark full-btn" type="submit">Send enquiry on WhatsApp <span>↗</span></button><p class="form-disclaimer">This starter version opens WhatsApp with your enquiry. Online payments, account creation and saved bookings will be added after secure backend setup.</p></form>
+        <form class="booking-form" id="bookingForm"><div class="form-title"><h3>Travel enquiry</h3><span>We’ll be happy to help</span></div><div class="form-grid"><label>Full name<input name="name" required placeholder="Your name"></label><label>Phone / WhatsApp<input name="phone" required placeholder="03xx xxxxxxx"></label><label>Email (optional)<input name="email" type="email" placeholder="you@example.com"></label><label>Service<select name="service" required><option value="">Choose a service</option><option>Hajj package</option><option>Umrah package</option><option>Hotel / room booking</option><option>Flight tickets</option><option>International tour</option><option>Visa services</option><option>Airport transfer</option><option>Ziyarat / transport</option><option>Travel insurance</option><option>Travel partner support</option><option>Study abroad enquiry</option><option>Employment solutions enquiry</option><option>Other</option></select></label><label class="full">Travel details<textarea name="details" rows="3" placeholder="Destination, dates, number of travellers, or any questions"></textarea></label></div><button class="btn btn-dark full-btn" type="submit">Send enquiry on WhatsApp <span>↗</span></button><p class="form-disclaimer">This starter version opens WhatsApp with your enquiry. Online payments, account creation and saved bookings will be added after secure backend setup.</p></form>
       </div>
     </section>
   </main>
