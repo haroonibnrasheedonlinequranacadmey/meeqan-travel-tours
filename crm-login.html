@@ -41,9 +41,22 @@
 <form id="crmLoginForm">
 <label for="username">Work email or username</label><input id="username" name="username" autocomplete="username" required>
 <label for="password">Password</label><input id="password" name="password" type="password" autocomplete="current-password" required>
+<p style="margin:10px 0 0;text-align:right"><a href="#" id="forgotPasswordLink">Forgot password?</a></p>
 <p class="crm-error" id="loginError" role="alert" aria-live="polite"></p>
 <button type="submit">Login to Meeqan CRM</button>
 </form>
+<div id="resetRequestBox" hidden>
+<label for="resetEmail">Email address</label><input id="resetEmail" type="email" autocomplete="email" placeholder="you@company.com">
+<p class="crm-error" id="resetError" role="alert" aria-live="polite"></p>
+<button type="button" id="sendResetButton">Send Password Reset Email</button>
+<p style="text-align:center;margin:14px 0 0"><a href="#" id="backToLoginLink">Back to Login</a></p>
+</div>
+<div id="newPasswordBox" hidden>
+<label for="newPassword">New password</label><input id="newPassword" type="password" autocomplete="new-password" minlength="6" placeholder="At least 6 characters">
+<label for="confirmPassword">Confirm new password</label><input id="confirmPassword" type="password" autocomplete="new-password" minlength="6" placeholder="Repeat your new password">
+<p class="crm-error" id="newPasswordError" role="alert" aria-live="polite"></p>
+<button type="button" id="updatePasswordButton">Update Password</button>
+</div>
 <p class="crm-warning">Authorized staff only. Your Supabase account must have an active CRM profile.</p>
 </section></main><footer class="site-footer"><div class="container footer-bottom"><span>© <span id="year"></span> Meeqan Travel &amp; Tours</span><a href="index.html">Back to website</a></div></footer>
 <script src="assets/js/main.js"></script>
@@ -52,21 +65,57 @@ const SUPABASE_URL='https://jrzxymykwcelpxxkbwlz.supabase.co';
 const SUPABASE_PUBLISHABLE_KEY='sb_publishable_5-EyFGXY_lQqESbHGVnUUw_EHsW56lh';
 const supabaseClient=window.supabase.createClient(SUPABASE_URL,SUPABASE_PUBLISHABLE_KEY);
 document.getElementById('year').textContent = new Date().getFullYear();
-document.getElementById('crmLoginForm').addEventListener('submit', async function(event){
+const loginForm=document.getElementById('crmLoginForm');
+const loginError=document.getElementById('loginError');
+const resetRequestBox=document.getElementById('resetRequestBox');
+const newPasswordBox=document.getElementById('newPasswordBox');
+const forgotPasswordLink=document.getElementById('forgotPasswordLink');
+const backToLoginLink=document.getElementById('backToLoginLink');
+const resetEmail=document.getElementById('resetEmail');
+const resetError=document.getElementById('resetError');
+const newPasswordError=document.getElementById('newPasswordError');
+function resetRedirectUrl(){ return window.location.origin + window.location.pathname; }
+function showLogin(){ loginForm.hidden=false; resetRequestBox.hidden=true; newPasswordBox.hidden=true; loginError.textContent=''; resetError.textContent=''; newPasswordError.textContent=''; }
+function showResetRequest(){ loginForm.hidden=true; resetRequestBox.hidden=false; newPasswordBox.hidden=true; resetError.textContent=''; resetEmail.value=document.getElementById('username').value.trim(); resetEmail.focus(); }
+function showNewPassword(){ loginForm.hidden=true; resetRequestBox.hidden=true; newPasswordBox.hidden=false; newPasswordError.textContent=''; document.getElementById('newPassword').focus(); }
+forgotPasswordLink.addEventListener('click',e=>{e.preventDefault();showResetRequest()});
+backToLoginLink.addEventListener('click',e=>{e.preventDefault();showLogin()});
+document.getElementById('sendResetButton').addEventListener('click',async()=>{
+ const email=resetEmail.value.trim(); resetError.textContent='';
+ if(!email){resetError.textContent='Enter your email address.';return;}
+ const btn=document.getElementById('sendResetButton'); btn.disabled=true; btn.textContent='Sending...';
+ const {error}=await supabaseClient.auth.resetPasswordForEmail(email,{redirectTo:resetRedirectUrl()});
+ btn.disabled=false; btn.textContent='Send Password Reset Email';
+ if(error){resetError.textContent=error.message||'Unable to send reset email.';return;}
+ resetError.style.color='#146c43'; resetError.textContent='Password reset email sent. Check your inbox and open the reset link.';
+});
+document.getElementById('updatePasswordButton').addEventListener('click',async()=>{
+ const password=document.getElementById('newPassword').value; const confirm=document.getElementById('confirmPassword').value; newPasswordError.style.color=''; newPasswordError.textContent='';
+ if(password.length<6){newPasswordError.textContent='Password must be at least 6 characters.';return;}
+ if(password!==confirm){newPasswordError.textContent='Passwords do not match.';return;}
+ const btn=document.getElementById('updatePasswordButton'); btn.disabled=true; btn.textContent='Updating...';
+ const {error}=await supabaseClient.auth.updateUser({password});
+ btn.disabled=false; btn.textContent='Update Password';
+ if(error){newPasswordError.textContent=error.message||'Unable to update password.';return;}
+ newPasswordError.style.color='#146c43'; newPasswordError.textContent='Password updated successfully. You can now log in with your new password.';
+ await supabaseClient.auth.signOut();
+ setTimeout(showLogin,1200);
+});
+loginForm.addEventListener('submit', async function(event){
  event.preventDefault();
- const username=document.getElementById('username').value.trim();
- const password=document.getElementById('password').value;
- const errorBox=document.getElementById('loginError');
- errorBox.textContent='';
- if(!username || !password){ errorBox.textContent='Enter your email and password.'; return; }
- const button=this.querySelector('button'); button.disabled=true;
- const {data,error}=await supabaseClient.auth.signInWithPassword({email:username,password});
- button.disabled=false;
- if(error){ errorBox.textContent=error.message || 'Login failed.'; return; }
+ const email=document.getElementById('username').value.trim(); const password=document.getElementById('password').value;
+ loginError.textContent=''; loginError.style.color='';
+ if(!email||!password){loginError.textContent='Enter your email and password.';return;}
+ const button=this.querySelector('button[type="submit"]'); button.disabled=true; button.textContent='Signing in...';
+ const {data,error}=await supabaseClient.auth.signInWithPassword({email,password});
+ button.disabled=false; button.textContent='Login to Meeqan CRM';
+ if(error){loginError.textContent=error.message||'Login failed. If you forgot your password, use Forgot password?';return;}
  const {data:profile,error:profileError}=await supabaseClient.from('profiles').select('id,role,active').eq('id',data.user.id).maybeSingle();
- if(profileError || !profile){ await supabaseClient.auth.signOut(); errorBox.textContent='Your CRM profile is not configured. Contact the administrator.'; return; }
- if(profile.active===false){ await supabaseClient.auth.signOut(); errorBox.textContent='Your CRM account is inactive.'; return; }
+ if(profileError||!profile){await supabaseClient.auth.signOut();loginError.textContent='Your CRM profile is not configured. Contact the administrator.';return;}
+ if(profile.active===false){await supabaseClient.auth.signOut();loginError.textContent='Your CRM account is inactive.';return;}
  window.location.href='crm-meeqan/dashboard.html';
 });
-</script>
+supabaseClient.auth.onAuthStateChange((event)=>{ if(event==='PASSWORD_RECOVERY') showNewPassword(); });
+if(new URLSearchParams(window.location.hash.replace(/^#/, '')).get('type')==='recovery') showNewPassword();
+</script></script>
 </body></html>
