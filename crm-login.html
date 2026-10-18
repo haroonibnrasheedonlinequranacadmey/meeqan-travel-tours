@@ -34,18 +34,17 @@
 <a class="nav-cta" href="crm-login.html" aria-current="page">CRM Login ↗</a>
 </nav></div></header>
 <main class="crm-wrap"><section class="crm-card">
-<p class="eyebrow">TEAM ACCESS</p><h1>CRM Login</h1>
-<p>Sign in to open the Meeqan admin preview dashboard.</p>
-<div class="crm-note"><strong>Temporary demo login</strong><br>Username: <code>meeqanadmin</code><br>Password: <code>Meeqan@123</code></div>
+<p class="eyebrow">TEAM ACCESS</p><h1>Meeqan CRM Login</h1>
+<p>Sign in to open the Meeqan CRM workspace.</p>
+<div class="crm-note"><strong>Temporary preview mode</strong><br>Supabase authentication will be connected in the next phase. For now, enter any non-empty username and password to open the CRM preview.</div>
 <form id="crmLoginForm">
-<label for="username">Username</label><input id="username" name="username" autocomplete="username" required>
+<label for="username">Work email or username</label><input id="username" name="username" autocomplete="username" required>
 <label for="password">Password</label><input id="password" name="password" type="password" autocomplete="current-password" required>
 <p class="crm-error" id="loginError" role="alert" aria-live="polite"></p>
-<button type="submit">Login to CRM</button>
+<button type="submit">Login to Meeqan CRM</button>
 </form>
-<p class="crm-warning">Demo only: these credentials are stored in front-end code and are not secure. Do not use real customer or payment data. A production CRM needs server-side authentication before public use.</p>
-</section></main>
-<footer class="site-footer"><div class="container footer-bottom"><span>© <span id="year"></span> Meeqan Travel &amp; Tours</span><a href="index.html">Back to website</a></div></footer>
+<p class="crm-warning">Preview only: this is not secure authentication. Do not enter real customer, passport, visa, or payment information until Supabase Auth and database permissions are configured.</p>
+</section></main><footer class="site-footer"><div class="container footer-bottom"><span>© <span id="year"></span> Meeqan Travel &amp; Tours</span><a href="index.html">Back to website</a></div></footer>
 <script src="assets/js/main.js"></script>
 <script>
 document.getElementById('year').textContent = new Date().getFullYear();
@@ -53,11 +52,8 @@ document.getElementById('crmLoginForm').addEventListener('submit', function(even
  event.preventDefault();
  const username=document.getElementById('username').value.trim();
  const password=document.getElementById('password').value;
- if(username==='meeqanadmin' && password==='Meeqan@123'){
-   window.location.href='Admin/index.html';
- } else {
-   document.getElementById('loginError').textContent='Login details do not match. Please use the temporary demo credentials shown above.';
- }
+ if(username && password){ sessionStorage.setItem('meeqan-crm-session','demo'); sessionStorage.setItem('meeqan-crm-user',username); window.location.href='crm-meeqan/dashboard.html'; }
+ else { document.getElementById('loginError').textContent='Enter your username and password.'; }
 });
 </script>
 </body></html>
