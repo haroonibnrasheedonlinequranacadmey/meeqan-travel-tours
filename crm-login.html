@@ -60,10 +60,9 @@
 <p class="crm-warning">Authorized staff only. Your Supabase account must have an active CRM profile.</p>
 </section></main><footer class="site-footer"><div class="container footer-bottom"><span>© <span id="year"></span> Meeqan Travel &amp; Tours</span><a href="index.html">Back to website</a></div></footer>
 <script src="assets/js/main.js"></script>
+<script src="crm-meeqan/assets/js/supabase-config.js"></script>
 <script>
-const SUPABASE_URL='https://jrzxymykwcelpxxkbwlz.supabase.co';
-const SUPABASE_PUBLISHABLE_KEY='sb_publishable_5-EyFGXY_lQqESbHGVnUUw_EHsW56lh';
-const supabaseClient=window.supabase.createClient(SUPABASE_URL,SUPABASE_PUBLISHABLE_KEY);
+const supabaseClient=window.meeqanSupabase;
 document.getElementById('year').textContent = new Date().getFullYear();
 const loginForm=document.getElementById('crmLoginForm');
 const loginError=document.getElementById('loginError');
@@ -108,14 +107,15 @@ loginForm.addEventListener('submit', async function(event){
  if(!email||!password){loginError.textContent='Enter your email and password.';return;}
  const button=this.querySelector('button[type="submit"]'); button.disabled=true; button.textContent='Signing in...';
  const {data,error}=await supabaseClient.auth.signInWithPassword({email,password});
- button.disabled=false; button.textContent='Login to Meeqan CRM';
- if(error){loginError.textContent=error.message||'Login failed. If you forgot your password, use Forgot password?';return;}
- const {data:profile,error:profileError}=await supabaseClient.from('profiles').select('id,role,is_active').eq('id',data.user.id).maybeSingle();
- if(profileError||!profile){await supabaseClient.auth.signOut();loginError.textContent='Your CRM profile is not configured. Contact the administrator.';return;}
- if(profile.is_active===false){await supabaseClient.auth.signOut();loginError.textContent='Your CRM account is inactive.';return;}
+ if(error){button.disabled=false; button.textContent='Login to Meeqan CRM'; loginError.textContent=error.message||'Invalid login credentials.';return;}
+ if(!data.user){button.disabled=false; button.textContent='Login to Meeqan CRM'; loginError.textContent='Login failed. Please try again.';return;}
+ const {data:profile,error:profileError}=await supabaseClient.from('profiles').select('id,role,active').eq('id',data.user.id).maybeSingle();
+ if(profileError){await supabaseClient.auth.signOut();button.disabled=false;button.textContent='Login to Meeqan CRM';loginError.textContent='CRM profile lookup failed: '+(profileError.message||'Unable to read profile.');return;}
+ if(!profile){await supabaseClient.auth.signOut();button.disabled=false;button.textContent='Login to Meeqan CRM';loginError.textContent='Your CRM profile is not configured. Contact the administrator.';return;}
+ if(profile.active===false){await supabaseClient.auth.signOut();button.disabled=false;button.textContent='Login to Meeqan CRM';loginError.textContent='Your CRM account is inactive.';return;}
  window.location.href='crm-meeqan/dashboard.html';
 });
 supabaseClient.auth.onAuthStateChange((event)=>{ if(event==='PASSWORD_RECOVERY') showNewPassword(); });
 if(new URLSearchParams(window.location.hash.replace(/^#/, '')).get('type')==='recovery') showNewPassword();
-</script></script>
+</script>
 </body></html>
