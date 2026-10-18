@@ -36,24 +36,54 @@
 <main class="crm-wrap"><section class="crm-card">
 <p class="eyebrow">TEAM ACCESS</p><h1>Meeqan CRM Login</h1>
 <p>Sign in to open the Meeqan CRM workspace.</p>
-<div class="crm-note"><strong>Temporary preview mode</strong><br>Supabase authentication will be connected in the next phase. For now, enter any non-empty username and password to open the CRM preview.</div>
+<div class="crm-note"><strong>Secure CRM access</strong><br>Sign in with your authorized Supabase CRM account. Access is checked against your CRM role and database permissions.</div>
 <form id="crmLoginForm">
 <label for="username">Work email or username</label><input id="username" name="username" autocomplete="username" required>
 <label for="password">Password</label><input id="password" name="password" type="password" autocomplete="current-password" required>
 <p class="crm-error" id="loginError" role="alert" aria-live="polite"></p>
 <button type="submit">Login to Meeqan CRM</button>
 </form>
-<p class="crm-warning">Preview only: this is not secure authentication. Do not enter real customer, passport, visa, or payment information until Supabase Auth and database permissions are configured.</p>
+<p class="crm-warning">Authorized CRM users only. Your session is handled by Supabase Auth and database access is protected by Row Level Security (RLS).</p>
 </section></main><footer class="site-footer"><div class="container footer-bottom"><span>© <span id="year"></span> Meeqan Travel &amp; Tours</span><a href="index.html">Back to website</a></div></footer>
 <script src="assets/js/main.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script>
-document.getElementById('year').textContent = new Date().getFullYear();
-document.getElementById('crmLoginForm').addEventListener('submit', function(event){
+const meeqanSupabase = window.supabase.createClient(
+  'https://jrzxymykwcelpxxkbwlz.supabase.co',
+  'sb_publishable_5-EyFGXY_lQqESbHGVnUUw_EHsW56l'
+);
+const form=document.getElementById('crmLoginForm');
+const errorBox=document.getElementById('loginError');
+document.getElementById('year').textContent=new Date().getFullYear();
+(async()=>{
+  const {data:{session}}=await meeqanSupabase.auth.getSession();
+  if(session) window.location.href='crm-meeqan/dashboard.html';
+})();
+form.addEventListener('submit',async function(event){
  event.preventDefault();
- const username=document.getElementById('username').value.trim();
+ errorBox.textContent='';
+ const email=document.getElementById('username').value.trim();
  const password=document.getElementById('password').value;
- if(username && password){ sessionStorage.setItem('meeqan-crm-session','demo'); sessionStorage.setItem('meeqan-crm-user',username); window.location.href='crm-meeqan/dashboard.html'; }
- else { document.getElementById('loginError').textContent='Enter your username and password.'; }
+ const btn=form.querySelector('button');
+ btn.disabled=true; btn.textContent='Signing in...';
+ try{
+   const {data,error}=await meeqanSupabase.auth.signInWithPassword({email,password});
+   if(error) throw error;
+   const {data:profile,error:pe}=await meeqanSupabase.from('profiles')
+     .select('role,active,status').eq('id',data.user.id).single();
+   if(pe) throw pe;
+   const role=(profile.role||'staff').toLowerCase();
+   if(profile.active===false||profile.status==='Inactive'||!['admin','staff','accounts'].includes(role)){
+     await meeqanSupabase.auth.signOut();
+     throw new Error('Your account is not authorized for Meeqan CRM.');
+   }
+   sessionStorage.setItem('meeqan-crm-session','supabase');
+   window.location.href='crm-meeqan/dashboard.html';
+ }catch(err){
+   errorBox.textContent=err.message||'Login failed. Check your email and password.';
+ }finally{
+   btn.disabled=false;btn.textContent='Login to Meeqan CRM';
+ }
 });
 </script>
 </body></html>
