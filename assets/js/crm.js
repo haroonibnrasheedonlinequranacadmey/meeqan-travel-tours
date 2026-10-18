@@ -16,38 +16,38 @@ const PAGE_MAP = {
     toUi:r=>({id:r.id,code:r.customer_code||shortId(r.id,"CUS"),name:r.full_name||r.name||"",email:r.email||"",phone:r.phone||r.whatsapp||"",country:r.country||"",created:dateOnly(r.created_at||r.created),status:r.status||"Active",notes:r.notes||""}),
     fromUi:o=>({full_name:o.name,email:o.email||null,phone:o.phone||null,country:o.country||null,status:o.status||"Active",notes:o.notes||null})},
   inquiries: {table:"inquiries", singular:"Inquiry", order:"created_at",
-    toUi:r=>({id:r.id,code:r.lead_code||shortId(r.id,"LD"),name:r.customer_name||r.name||"",contact:r.phone||r.contact||r.email||"",interest:r.service_type||r.interest||"",followup:dateOnly(r.follow_up_at||r.followup),status:r.status||"New",notes:r.message||r.notes||""}),
-    fromUi:o=>({customer_name:o.name||"Inquiry",name:o.name||null,phone:o.contact||null,contact:o.contact||null,service_type:o.interest||"Umrah",interest:o.interest||null,follow_up_at:o.followup||null,followup:o.followup||null,status:o.status||"New",message:o.notes||null})},
+    toUi:r=>({id:r.id,code:r.lead_code||shortId(r.id,"LD"),name:r.customer_name||r.full_name||r.name||"",contact:r.phone||r.contact||r.email||"",interest:r.service_type||r.interest||r.message||"",followup:dateOnly(r.follow_up_at||r.followup),status:r.status||"New",notes:r.message||r.notes||""}),
+    fromUi:o=>({customer_name:o.name||"Unknown",name:o.name||null,phone:o.contact||null,contact:o.contact||null,service_type:o.interest||"Umrah",interest:o.interest||null,follow_up_at:o.followup||null,followup:o.followup||null,message:o.notes||null,status:o.status||"new"})},
   bookings: {table:"bookings", singular:"Booking", order:"created_at",
-    toUi:r=>({id:r.id,code:r.booking_number||r.booking_code||shortId(r.id,"BK"),customer:r.customer||r.customer_name||"",service:r.service||r.service_type||"Umrah",date:dateOnly(r.date||r.travel_date),amount:Number(r.amount??r.total_amount??0),status:r.status||"Pending",notes:r.notes||""}),
-    fromUi:o=>({customer:o.customer,service:o.service||"Umrah",service_type:o.service||"Umrah",date:o.date||null,travel_date:o.date||null,amount:Number(o.amount||0),total_amount:Number(o.amount||0),status:o.status||"Pending",notes:o.notes||null})},
+    toUi:r=>({id:r.id,code:r.booking_number||r.booking_code||shortId(r.id,"BK"),customer:r.customer||r.customer_name||"",service:r.service_type||r.service||"Umrah",date:dateOnly(r.travel_date||r.date),amount:Number(r.total_amount??r.amount??0),status:r.status||"pending",notes:r.notes||""}),
+    fromUi:o=>({customer:o.customer||null,service:o.service||null,service_type:o.service||"Umrah",travel_date:o.date||null,date:o.date||null,total_amount:Number(o.amount||0),amount:Number(o.amount||0),status:o.status||"pending",notes:o.notes||null})},
   packages: {table:"packages", singular:"Package", order:"created_at",
-    toUi:r=>({id:r.id,code:shortId(r.id,"PKG"),name:r.name||"",destination:r.destination||"",duration:r.duration|| (r.duration_days?`${r.duration_days} days`:""),price:r.price||0,status:r.status||(r.active===false?"Inactive":"Active"),description:r.description||""}),
-    fromUi:o=>({name:o.name,destination:o.destination||null,duration:o.duration||null,duration_days:parseInt(o.duration,10)||null,price:Number(o.price||0),status:o.status||"Active",active:o.status!=="Inactive",description:o.description||null})},
+    toUi:r=>({id:r.id,code:shortId(r.id,"PKG"),name:r.name||"",destination:r.destination||"",duration:r.duration||r.duration_days||"",price:Number(r.price||0),status:r.status||(r.active===false?"Inactive":"Active"),description:r.description||""}),
+    fromUi:o=>({name:o.name,destination:o.destination||null,duration:o.duration||null,duration_days:Number.parseInt(o.duration,10)||null,price:Number(o.price||0),status:o.status||"Active",active:o.status!=="Inactive",description:o.description||null})},
   hotels: {table:"hotels", singular:"Hotel", order:"created_at",
     toUi:r=>({id:r.id,code:shortId(r.id,"HTL"),name:r.name||"",city:r.city||"",country:r.country||"",contact:r.contact||r.phone||"",status:r.status||(r.active===false?"Inactive":"Active"),notes:r.notes||""}),
     fromUi:o=>({name:o.name,city:o.city||"Not specified",country:o.country||null,contact:o.contact||null,phone:o.contact||null,status:o.status||"Active",active:o.status!=="Inactive",notes:o.notes||null})},
   flights: {table:"flight_requests", singular:"Flight Request", order:"created_at",
-    toUi:r=>({id:r.id,code:shortId(r.id,"FLT"),customer:r.customer||r.customer_name||"",route:r.route||[r.origin,r.destination].filter(Boolean).join("-")||"",date:dateOnly(r.date||r.departure_date),pnr:r.pnr||r.reference_number||"",status:r.status||"Requested",notes:r.notes||""}),
-    fromUi:o=>({customer:o.customer,route:o.route||null,date:o.date||null,departure_date:o.date||null,pnr:o.pnr||null,reference_number:o.pnr||null,status:o.status||"Requested",notes:o.notes||null})},
-  transport: {table:"transport_requests", singular:"Transport Job", order:"created_at",
-    toUi:r=>({id:r.id,code:shortId(r.id,"TR"),customer:r.customer||r.customer_name||"",vehicle:r.vehicle||r.vehicle_type||"",date:dateOnly(r.date||r.pickup_at),driver:r.driver||"",status:r.status||"Scheduled",notes:r.notes||""}),
-    fromUi:o=>({customer:o.customer,vehicle:o.vehicle||null,vehicle_type:o.vehicle||null,date:o.date||null,pickup_at:o.date||null,driver:o.driver||null,status:o.status||"Scheduled",notes:o.notes||null})},
+    toUi:r=>({id:r.id,code:shortId(r.id,"FLT"),customer:r.customer||r.customer_name||"",route:r.route||[r.origin,r.destination].filter(Boolean).join(" → "),date:dateOnly(r.date||r.departure_date),pnr:r.pnr||r.reference_number||"",status:r.status||"requested",notes:r.notes||""}),
+    fromUi:o=>({customer:o.customer||null,route:o.route||null,date:o.date||null,departure_date:o.date||null,pnr:o.pnr||null,reference_number:o.pnr||null,status:String(o.status||"requested").trim().toLowerCase(),notes:o.notes||null,passengers:1})},
+  transport: {table:"transport_requests", singular:"Transport Request", order:"created_at",
+    toUi:r=>({id:r.id,code:shortId(r.id,"TR"),customer:r.customer||r.customer_name||"",vehicle:r.vehicle||r.vehicle_type||"",date:dateOnly(r.date||r.pickup_at),driver:r.driver||"",status:r.status||"requested",notes:r.notes||""}),
+    fromUi:o=>({customer:o.customer||null,vehicle:o.vehicle||null,vehicle_type:o.vehicle||null,date:o.date||null,pickup_at:o.date||null,driver:o.driver||null,status:o.status||"requested",notes:o.notes||null,passengers:1})},
   visas: {table:"visa_cases", singular:"Visa Application", order:"created_at",
-    toUi:r=>({id:r.id,code:shortId(r.id,"VISA"),applicant:r.applicant||r.passport_name||"",country:r.country||"",type:r.type||"",submitted:dateOnly(r.submitted||r.created_at),status:r.status||r.application_status||"Documents needed",notes:r.notes||""}),
-    fromUi:o=>({applicant:o.applicant,passport_name:o.applicant,country:o.country||null,type:o.type||null,submitted:o.submitted||null,status:o.status||"Documents needed",application_status:o.status||"Documents needed",notes:o.notes||null})},
+    toUi:r=>({id:r.id,code:shortId(r.id,"VISA"),applicant:r.applicant||r.passport_name||r.applicant_name||"",country:r.country||"",type:r.type||r.visa_type||"",submitted:dateOnly(r.submitted||r.created_at),status:r.status||r.application_status||"Documents needed",notes:r.notes||r.document_notes||""}),
+    fromUi:o=>({applicant:o.applicant||"Unknown",passport_name:o.applicant||"Unknown",country:o.country||null,type:o.type||null,submitted:o.submitted||null,status:o.status||"Documents needed",application_status:o.status||"Documents needed",notes:o.notes||null})},
   tours: {table:"tours", singular:"Tour", order:"created_at",
     toUi:r=>({id:r.id,code:shortId(r.id,"TOUR"),name:r.name||"",destination:r.destination||"",date:dateOnly(r.start_date),capacity:r.capacity||0,status:r.status||"Planned",description:r.description||""}),
     fromUi:o=>({name:o.name,destination:o.destination||null,start_date:o.date||null,capacity:Number(o.capacity||0),status:o.status||"Planned",description:o.description||null})},
   payments: {table:"payments", singular:"Payment", order:"created_at",
-    toUi:r=>({id:r.id,code:shortId(r.id,"PAY"),reference:r.reference||r.reference_number||"",customer:r.customer||r.customer_name||"",amount:r.amount||0,due:dateOnly(r.due||r.payment_date),status:r.status||"Pending",notes:r.notes||""}),
-    fromUi:o=>({reference:o.reference||null,reference_number:o.reference||null,customer:o.customer||null,amount:Number(o.amount||0),due:o.due||null,payment_date:o.due||null,status:o.status||"Pending",notes:o.notes||null})},
+    toUi:r=>({id:r.id,code:shortId(r.id,"PAY"),reference:r.reference||r.reference_number||"",customer:r.customer||"",amount:Number(r.amount||0),due:dateOnly(r.due||r.payment_date),status:r.status||"Pending",notes:r.notes||""}),
+    fromUi:o=>({reference:o.reference||null,reference_number:o.reference||null,customer:o.customer||null,amount:Number(o.amount||0),due:o.due||null,status:o.status||"Pending",notes:o.notes||null})},
   staff: {table:"profiles", singular:"Staff Member", order:"created_at",
     toUi:r=>({id:r.id,name:r.full_name||r.name||"",email:r.email||"",role:String(r.role||"staff").replace("_"," ").replace(/\b\w/g,m=>m.toUpperCase()),lastactive:dateOnly(r.lastactive||r.created_at),status:r.active===false||String(r.status||"").toLowerCase()==="inactive"?"Inactive":"Active"}),
-    fromUi:o=>({full_name:o.name,role:String(o.role||"Staff").toLowerCase().replaceAll(" ","_"),active:o.status==="Active",status:o.status||"Active"})},
+    fromUi:o=>({full_name:o.name,role:String(o.role||"staff").toLowerCase().replace(/\s+/g,"_"),active:o.status==="Active",status:o.status||"Active"})},
   "website-content": {table:"website_content", singular:"Content Item", order:"updated_at",
-    toUi:r=>({id:r.id,code:shortId(r.id,"WEB"),page:r.page_key||r.page||"",title:r.title||"",content:r.content||"",updated:dateOnly(r.updated_at||r.updated),by:r.updated_by||r.by||"",status:r.status||"Draft"}),
-    fromUi:o=>({page_key:o.page,title:o.title,content:o.content||null,status:o.status||"Draft"})}
+    toUi:r=>({id:r.id,code:shortId(r.id,"WEB"),page:r.page_key||r.page||"home",title:r.title||"",content:r.content||"",updated:dateOnly(r.updated_at||r.updated),by:r.updated_by||r.by||"",status:r.status||"Draft"}),
+    fromUi:o=>({page_key:o.page||"home",page:o.page||"home",title:o.title,content:o.content||null,status:o.status||"Draft"})}
 };
 const $=(s,r=document)=>r.querySelector(s);
 const $$=(s,r=document)=>[...r.querySelectorAll(s)];
@@ -179,10 +179,16 @@ function openForm(row={}){
 }
 function closeForm(){$("#record-modal")?.classList.remove("open");$("#record-modal")?.setAttribute("aria-hidden","true")}
 async function writeWithSchemaFallback(builderFactory,payload){
-  // Never silently remove fields from a save. A schema mismatch must be fixed
-  // in Supabase so the user is not told a partial record was saved.
-  const {error}=await builderFactory(payload);
-  return {error:error||null};
+  let working={...payload};
+  for(let attempt=0;attempt<12;attempt++){
+    const {error}=await builderFactory(working);
+    if(!error)return {error:null};
+    const msg=String(error.message||"");
+    const m=msg.match(/column\s+[\"']?([A-Za-z0-9_]+)[\"']?\s+does not exist/i);
+    if(!m || !(m[1] in working))return {error};
+    delete working[m[1]];
+  }
+  return {error:new Error("Unable to save record because the Supabase table schema could not be reconciled.")};
 }
 async function initCrud(){
   const page=document.body.dataset.page; const cfg=PAGE_MAP[page]; if(!cfg)return;
@@ -233,9 +239,9 @@ async function initDashboard(){
     ["payments","Total Payments","＄"],
     ["packages","Total Packages","◇"],
     ["hotels","Total Hotels","⌂"],
-    ["flight_records","Total Flights","✈"],
-    ["transport_jobs","Total Transport","⇄"],
-    ["visa_applications","Total Visas","▤"],
+    ["flight_requests","Total Flights","✈"],
+    ["transport_requests","Total Transport","⇄"],
+    ["visa_cases","Total Visas","▤"],
     ["tours","Total Tours","◎"]
   ];
   const results=await Promise.all(resources.map(([table])=>supabaseClient.from(table).select("id",{count:"exact",head:true})));
@@ -272,7 +278,7 @@ async function initReports(){
     supabaseClient.from("payments").select("*"),
     supabaseClient.from("bookings").select("*"),
     supabaseClient.from("inquiries").select("*"),
-    supabaseClient.from("visa_applications").select("*")
+    supabaseClient.from("visa_cases").select("*")
   ]);
   const revenue=(payments.data||[]).filter(p=>p.status==="Paid").reduce((s,p)=>s+Number(p.amount||0),0);
   const outstanding=(payments.data||[]).filter(p=>p.status==="Pending"||p.status==="Overdue").reduce((s,p)=>s+Number(p.amount||0),0);
