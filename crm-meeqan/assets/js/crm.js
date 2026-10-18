@@ -142,8 +142,14 @@ function setupLayout(){
 }
 async function loadRows(page){
   const cfg=PAGE_MAP[page]; if(!cfg)return [];
-  const {data,error}=await supabaseClient.from(cfg.table).select(cfg.select).order(cfg.order,{ascending:false});
-  if(error)throw error; return (data||[]).map(cfg.toUi);
+  const {data,error}=await supabaseClient.from(cfg.table).select("*");
+  if(error)throw error;
+  const rows=(data||[]).slice().sort((a,b)=>{
+    const av=a?.[cfg.order]||a?.updated_at||a?.created_at||"";
+    const bv=b?.[cfg.order]||b?.updated_at||b?.created_at||"";
+    return String(bv).localeCompare(String(av));
+  });
+  return rows.map(cfg.toUi);
 }
 function renderTable(data){
   const cfg=PAGE_CONFIG;if(!cfg)return;
@@ -172,6 +178,18 @@ function openForm(row={}){
   modal.classList.add("open");modal.setAttribute("aria-hidden","false");
 }
 function closeForm(){$("#record-modal")?.classList.remove("open");$("#record-modal")?.setAttribute("aria-hidden","true")}
+async function writeWithSchemaFallback(builderFactory,payload){
+  let working={...payload};
+  for(let attempt=0;attempt<12;attempt++){
+    const {error}=await builderFactory(working);
+    if(!error)return {error:null};
+    const msg=String(error.message||"");
+    const m=msg.match(/column\s+[\"']?([A-Za-z0-9_]+)[\"']?\s+does not exist/i);
+    if(!m || !(m[1] in working))return {error};
+    delete working[m[1]];
+  }
+  return {error:new Error("Unable to save record because the Supabase table schema could not be reconciled.")};
+}
 async function initCrud(){
   const page=document.body.dataset.page; const cfg=PAGE_MAP[page]; if(!cfg)return;
   pageConfig=cfg;
@@ -188,8 +206,10 @@ async function initCrud(){
     if(!id && page==="inquiries" && role()!=="read_only")payload.assigned_to=currentSession.user.id;
     if(!id && page==="website-content")payload.updated_by=currentSession.user.id;
     if(id && page==="website-content")payload.updated_by=currentSession.user.id;
-    const q=id?supabaseClient.from(cfg.table).update(payload).eq("id",id):supabaseClient.from(cfg.table).insert(payload);
-    const {error}=await q;
+    const result=await writeWithSchemaFallback(working=>id
+      ? supabaseClient.from(cfg.table).update(working).eq("id",id)
+      : supabaseClient.from(cfg.table).insert(working), payload);
+    const {error}=result;
     if(error){toast(error.message||"Save failed.",true);return}
     toast(id?"Record updated successfully.":"Record added successfully.");
     closeForm();currentData=await loadRows(page);renderTable(currentData);
@@ -243,7 +263,7 @@ function startDashboardAutoRefresh(){
   setInterval(refresh,10000);
 }
 async function initNotifications(){
-  const {data,error}=await supabaseClient.from("notifications").select("id,title,body,category,is_read,created_at").order("created_at",{ascending:false}).limit(50);
+  const {data,error}=await supabaseClient.from("notifications").select("*").limit(50);
   const panel=$(".panel");if(!panel)return;
   if(error){toast(error.message||"Unable to load notifications.",true);return}
   panel.innerHTML=`<div class="panel-head"><h3>Notification center</h3><span class="muted">${data?.length||0} notification${(data?.length||0)===1?"":"s"}</span></div>`;
@@ -255,10 +275,10 @@ async function initNotifications(){
 }
 async function initReports(){
   const [payments,bookings,inquiries,visas]=await Promise.all([
-    supabaseClient.from("payments").select("amount,status"),
-    supabaseClient.from("bookings").select("id,status,service_type,travel_date,amount"),
-    supabaseClient.from("inquiries").select("id,status,follow_up_date"),
-    supabaseClient.from("visa_applications").select("id,status")
+    supabaseClient.from("payments").select("*"),
+    supabaseClient.from("bookings").select("*"),
+    supabaseClient.from("inquiries").select("*"),
+    supabaseClient.from("visa_applications").select("*")
   ]);
   const revenue=(payments.data||[]).filter(p=>p.status==="Paid").reduce((s,p)=>s+Number(p.amount||0),0);
   const outstanding=(payments.data||[]).filter(p=>p.status==="Pending"||p.status==="Overdue").reduce((s,p)=>s+Number(p.amount||0),0);
@@ -276,7 +296,7 @@ async function initReports(){
   </div>`;
 }
 async function initSettings(){
-  const {data}=await supabaseClient.from("crm_settings").select("key,value");
+  const {data}=await supabaseClient.from("crm_settings").select("*");
   const settings=Object.fromEntries((data||[]).map(x=>[x.key,x.value]));
   const name=$("#business-name"),email=$("#business-email"),currency=$("#default-currency"),tz=$("#timezone");
   if(name)name.value=settings.business_name?.value??settings.business_name??"Meeqan Travel & Tours";
@@ -291,7 +311,8 @@ async function initSettings(){
       {key:"default_currency",value:{value:currency.value}},
       {key:"timezone",value:{value:tz.value}}
     ];
-    const {error}=await supabaseClient.from("crm_settings").upsert(rows.map(r=>({...r,updated_by:currentSession.user.id})));
+    const result=await writeWithSchemaFallback(working=>supabaseClient.from("crm_settings").upsert(working),rows.map(r=>({...r,updated_by:currentSession.user.id})));
+    const {error}=result;
     if(error){toast(error.message||"Unable to save settings.",true);return}
     toast("Settings saved to Supabase.");
   });
