@@ -42,9 +42,9 @@ const PAGE_MAP = {
   payments: {table:"payments", singular:"Payment", order:"created_at", select:"id,reference,customer_name,amount,due_date,status,notes,created_at",
     toUi:r=>({id:r.id,code:shortId(r.id,"PAY"),reference:r.reference,customer:r.customer_name,amount:r.amount||0,due:r.due_date||"",status:r.status||"Pending",notes:r.notes||""}),
     fromUi:(o)=>({reference:o.reference,customer_name:o.customer||"",amount:Number(o.amount||0),due_date:o.due||null,status:o.status||"Pending",notes:o.notes||null})},
-  staff: {table:"profiles", singular:"Staff Member", order:"created_at", select:"id,full_name,role,is_active,created_at,updated_at",
-    toUi:r=>({id:r.id,name:r.full_name||"",email:"",role:String(r.role||"agent").replace("_"," ").replace(/\\b\\w/g,m=>m.toUpperCase()),lastactive:dateOnly(r.updated_at),status:r.is_active===false?"Inactive":"Active"}),
-    fromUi:(o)=>({full_name:o.name,role:String(o.role||"Agent").toLowerCase().replace(" ","_"),is_active:o.status==="Active"})},
+  staff: {table:"profiles", singular:"Staff Member", order:"created_at", select:"id,full_name,role,active,created_at,updated_at",
+    toUi:r=>({id:r.id,name:r.full_name||"",email:"",role:String(r.role||"agent").replace("_"," ").replace(/\\b\\w/g,m=>m.toUpperCase()),lastactive:dateOnly(r.updated_at),status:r.active===false?"Inactive":"Active"}),
+    fromUi:(o)=>({full_name:o.name,role:String(o.role||"Agent").toLowerCase().replace(" ","_"),active:o.status==="Active"})},
   "website-content": {table:"website_content", singular:"Content Item", order:"updated_at", select:"id,page_key,title,content,status,updated_by,updated_at",
     toUi:r=>({id:r.id,code:shortId(r.id,"WEB"),page:r.page_key,title:r.title,content:r.content||"",updated:dateOnly(r.updated_at),by:r.updated_by||"",status:r.status||"Draft"}),
     fromUi:(o)=>({page_key:o.page,title:o.title,content:o.content||null,status:o.status||"Draft"})}
@@ -86,8 +86,9 @@ async function enforceLogin(){
   if(document.body.dataset.page==="login")return true;
   const {data:{session},error}=await supabaseClient.auth.getSession();
   if(error||!session){location.replace("crm-login.html");return false}
-  const {data:profile,error:profileError}=await supabaseClient.from("profiles").select("id,full_name,role,is_active").eq("id",session.user.id).maybeSingle();
-  if(profileError||!profile||profile.is_active===false){await supabaseClient.auth.signOut();location.replace("crm-login.html");return false}
+  const {data:profile,error:profileError}=await supabaseClient.from("profiles").select("id,full_name,role,active").eq("id",session.user.id).maybeSingle();
+  if(profileError){await supabaseClient.auth.signOut();location.replace("crm-login.html?error=profile");return false}
+  if(!profile||profile.active===false){await supabaseClient.auth.signOut();location.replace("crm-login.html");return false}
   currentSession=session; currentProfile=profile; setConnectionUI(); return true;
 }
 async function initLogin(){
@@ -103,9 +104,10 @@ async function initLogin(){
     const {data,error}=await supabaseClient.auth.signInWithPassword({email,password});
     if(b)b.disabled=false;if(error){toast(error.message||"Login failed.",true);return}
     if(!data.user){toast("Login failed. Please try again.",true);return}
-    const {data:profile,error:pe}=await supabaseClient.from("profiles").select("id,full_name,role,is_active").eq("id",data.user.id).maybeSingle();
-    if(pe||!profile){await supabaseClient.auth.signOut();toast("Your CRM profile is not configured. Run the Supabase setup SQL.",true);return}
-    if(profile.is_active===false){await supabaseClient.auth.signOut();toast("Your CRM account is inactive.",true);return}
+    const {data:profile,error:pe}=await supabaseClient.from("profiles").select("id,full_name,role,active").eq("id",data.user.id).maybeSingle();
+    if(pe){await supabaseClient.auth.signOut();toast(`CRM profile lookup failed: ${pe.message||"Unable to read profile."}`,true);return}
+    if(!profile){await supabaseClient.auth.signOut();toast("Your CRM profile is not configured. Contact the administrator.",true);return}
+    if(profile.active===false){await supabaseClient.auth.signOut();toast("Your CRM account is inactive.",true);return}
     location.replace("dashboard.html");
   });
   resetForm?.addEventListener("submit",async e=>{
