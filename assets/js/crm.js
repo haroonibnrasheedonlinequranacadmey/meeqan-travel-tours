@@ -12,42 +12,42 @@ const CRM = {
   ]
 };
 const PAGE_MAP = {
-  customers: {table:"customers", singular:"Customer", order:"created_at", select:"id,customer_code,full_name,email,phone,country,status,notes,created_at,updated_at",
-    toUi:r=>({id:r.id,code:r.customer_code||shortId(r.id,"CUS"),name:r.full_name,email:r.email||"",phone:r.phone||"",country:r.country||"",created:dateOnly(r.created_at),status:r.status||"Active",notes:r.notes||""}),
-    fromUi:(o)=>({full_name:o.name,email:o.email||null,phone:o.phone||null,country:o.country||null,status:o.status||"Active",notes:o.notes||null})},
-  inquiries: {table:"inquiries", singular:"Inquiry", order:"created_at", select:"id,lead_code,full_name,contact,interest,follow_up_date,status,notes,assigned_to,created_at,updated_at",
-    toUi:r=>({id:r.id,code:r.lead_code||shortId(r.id,"LD"),name:r.full_name,contact:r.contact||"",interest:r.interest||"",followup:r.follow_up_date||"",status:r.status||"New",notes:r.notes||""}),
-    fromUi:(o)=>({full_name:o.name,contact:o.contact||null,interest:o.interest||null,follow_up_date:o.followup||null,status:o.status||"New",notes:o.notes||null})},
-  bookings: {table:"bookings", singular:"Booking", order:"created_at", select:"id,booking_code,customer_id,customer_name,service_type,travel_date,amount,currency,status,notes,created_by,created_at,updated_at",
-    toUi:r=>({id:r.id,code:r.booking_code||shortId(r.id,"BK"),customer:r.customer_name,service:r.service_type,date:r.travel_date||"",amount:r.amount||0,status:r.status||"Pending",notes:r.notes||""}),
-    fromUi:(o)=>({customer_name:o.customer,service_type:o.service,travel_date:o.date||null,amount:Number(o.amount||0),status:o.status||"Pending",notes:o.notes||null})},
-  packages: {table:"packages", singular:"Package", order:"created_at", select:"id,name,destination,duration,price,status,description,created_at",
-    toUi:r=>({id:r.id,code:shortId(r.id,"PKG"),name:r.name,destination:r.destination||"",duration:r.duration||"",price:r.price||0,status:r.status||"Active",description:r.description||""}),
-    fromUi:(o)=>({name:o.name,destination:o.destination||null,duration:o.duration||null,price:Number(o.price||0),status:o.status||"Active",description:o.description||null})},
-  hotels: {table:"hotels", singular:"Hotel", order:"created_at", select:"id,name,city,country,contact,status,notes,created_at",
-    toUi:r=>({id:r.id,code:shortId(r.id,"HTL"),name:r.name,city:r.city||"",country:r.country||"",contact:r.contact||"",status:r.status||"Active",notes:r.notes||""}),
-    fromUi:(o)=>({name:o.name,city:o.city||null,country:o.country||null,contact:o.contact||null,status:o.status||"Active",notes:o.notes||null})},
-  flights: {table:"flight_records", singular:"Flight Request", order:"created_at", select:"id,customer_name,route,travel_date,pnr,status,notes,created_at",
-    toUi:r=>({id:r.id,code:shortId(r.id,"FLT"),customer:r.customer_name,route:r.route||"",date:r.travel_date||"",pnr:r.pnr||"",status:r.status||"Requested",notes:r.notes||""}),
-    fromUi:(o)=>({customer_name:o.customer,route:o.route||null,travel_date:o.date||null,pnr:o.pnr||null,status:o.status||"Requested",notes:o.notes||null})},
-  transport: {table:"transport_jobs", singular:"Transport Job", order:"created_at", select:"id,customer_name,vehicle_service,pickup_date,driver,status,notes,created_at",
-    toUi:r=>({id:r.id,code:shortId(r.id,"TR"),customer:r.customer_name,vehicle:r.vehicle_service||"",date:r.pickup_date||"",driver:r.driver||"",status:r.status||"Scheduled",notes:r.notes||""}),
-    fromUi:(o)=>({customer_name:o.customer,vehicle_service:o.vehicle||null,pickup_date:o.date||null,driver:o.driver||null,status:o.status||"Scheduled",notes:o.notes||null})},
-  visas: {table:"visa_applications", singular:"Visa Application", order:"created_at", select:"id,applicant_name,country,visa_type,submitted_date,status,document_notes,created_at",
-    toUi:r=>({id:r.id,code:shortId(r.id,"VISA"),applicant:r.applicant_name,country:r.country||"",type:r.visa_type||"",submitted:r.submitted_date||"",status:r.status||"Documents needed",notes:r.document_notes||""}),
-    fromUi:(o)=>({applicant_name:o.applicant,country:o.country||null,visa_type:o.type||null,submitted_date:o.submitted||null,status:o.status||"Documents needed",document_notes:o.notes||null})},
-  tours: {table:"tours", singular:"Tour", order:"created_at", select:"id,name,destination,start_date,capacity,status,description,created_at",
-    toUi:r=>({id:r.id,code:shortId(r.id,"TOUR"),name:r.name,destination:r.destination||"",date:r.start_date||"",capacity:r.capacity||0,status:r.status||"Planned",description:r.description||""}),
-    fromUi:(o)=>({name:o.name,destination:o.destination||null,start_date:o.date||null,capacity:Number(o.capacity||0),status:o.status||"Planned",description:o.description||null})},
-  payments: {table:"payments", singular:"Payment", order:"created_at", select:"id,reference,customer_name,amount,due_date,status,notes,created_at",
-    toUi:r=>({id:r.id,code:shortId(r.id,"PAY"),reference:r.reference,customer:r.customer_name,amount:r.amount||0,due:r.due_date||"",status:r.status||"Pending",notes:r.notes||""}),
-    fromUi:(o)=>({reference:o.reference,customer_name:o.customer||"",amount:Number(o.amount||0),due_date:o.due||null,status:o.status||"Pending",notes:o.notes||null})},
-  staff: {table:"profiles", singular:"Staff Member", order:"created_at", select:"id,full_name,role,active,created_at,updated_at",
-    toUi:r=>({id:r.id,name:r.full_name||"",email:"",role:String(r.role||"agent").replace("_"," ").replace(/\\b\\w/g,m=>m.toUpperCase()),lastactive:dateOnly(r.updated_at),status:r.active===false?"Inactive":"Active"}),
-    fromUi:(o)=>({full_name:o.name,role:String(o.role||"Agent").toLowerCase().replace(" ","_"),active:o.status==="Active"})},
-  "website-content": {table:"website_content", singular:"Content Item", order:"updated_at", select:"id,page_key,title,content,status,updated_by,updated_at",
-    toUi:r=>({id:r.id,code:shortId(r.id,"WEB"),page:r.page_key,title:r.title,content:r.content||"",updated:dateOnly(r.updated_at),by:r.updated_by||"",status:r.status||"Draft"}),
-    fromUi:(o)=>({page_key:o.page,title:o.title,content:o.content||null,status:o.status||"Draft"})}
+  customers: {table:"customers", singular:"Customer", order:"created_at",
+    toUi:r=>({id:r.id,code:r.customer_code||shortId(r.id,"CUS"),name:r.full_name||r.name||"",email:r.email||"",phone:r.phone||r.whatsapp||"",country:r.country||"",created:dateOnly(r.created_at||r.created),status:r.status||"Active",notes:r.notes||""}),
+    fromUi:o=>({full_name:o.name,email:o.email||null,phone:o.phone||null,country:o.country||null,status:o.status||"Active",notes:o.notes||null})},
+  inquiries: {table:"inquiries", singular:"Inquiry", order:"created_at",
+    toUi:r=>({id:r.id,code:r.lead_code||shortId(r.id,"LD"),name:r.customer_name||r.name||"",contact:r.phone||r.contact||r.email||"",interest:r.service_type||r.interest||"",followup:dateOnly(r.follow_up_at||r.followup),status:r.status||"New",notes:r.message||r.notes||""}),
+    fromUi:o=>({customer_name:o.name||"Inquiry",name:o.name||null,phone:o.contact||null,contact:o.contact||null,service_type:o.interest||"Umrah",interest:o.interest||null,follow_up_at:o.followup||null,followup:o.followup||null,status:o.status||"New",message:o.notes||null})},
+  bookings: {table:"bookings", singular:"Booking", order:"created_at",
+    toUi:r=>({id:r.id,code:r.booking_number||r.booking_code||shortId(r.id,"BK"),customer:r.customer||r.customer_name||"",service:r.service||r.service_type||"Umrah",date:dateOnly(r.date||r.travel_date),amount:Number(r.amount??r.total_amount??0),status:r.status||"Pending",notes:r.notes||""}),
+    fromUi:o=>({customer:o.customer,service:o.service||"Umrah",service_type:o.service||"Umrah",date:o.date||null,travel_date:o.date||null,amount:Number(o.amount||0),total_amount:Number(o.amount||0),status:o.status||"Pending",notes:o.notes||null})},
+  packages: {table:"packages", singular:"Package", order:"created_at",
+    toUi:r=>({id:r.id,code:shortId(r.id,"PKG"),name:r.name||"",destination:r.destination||"",duration:r.duration|| (r.duration_days?`${r.duration_days} days`:""),price:r.price||0,status:r.status||(r.active===false?"Inactive":"Active"),description:r.description||""}),
+    fromUi:o=>({name:o.name,destination:o.destination||null,duration:o.duration||null,duration_days:parseInt(o.duration,10)||null,price:Number(o.price||0),status:o.status||"Active",active:o.status!=="Inactive",description:o.description||null})},
+  hotels: {table:"hotels", singular:"Hotel", order:"created_at",
+    toUi:r=>({id:r.id,code:shortId(r.id,"HTL"),name:r.name||"",city:r.city||"",country:r.country||"",contact:r.contact||r.phone||"",status:r.status||(r.active===false?"Inactive":"Active"),notes:r.notes||""}),
+    fromUi:o=>({name:o.name,city:o.city||"Not specified",country:o.country||null,contact:o.contact||null,phone:o.contact||null,status:o.status||"Active",active:o.status!=="Inactive",notes:o.notes||null})},
+  flights: {table:"flight_requests", singular:"Flight Request", order:"created_at",
+    toUi:r=>({id:r.id,code:shortId(r.id,"FLT"),customer:r.customer||r.customer_name||"",route:r.route||[r.origin,r.destination].filter(Boolean).join("-")||"",date:dateOnly(r.date||r.departure_date),pnr:r.pnr||r.reference_number||"",status:r.status||"Requested",notes:r.notes||""}),
+    fromUi:o=>({customer:o.customer,route:o.route||null,date:o.date||null,departure_date:o.date||null,pnr:o.pnr||null,reference_number:o.pnr||null,status:o.status||"Requested",notes:o.notes||null})},
+  transport: {table:"transport_requests", singular:"Transport Job", order:"created_at",
+    toUi:r=>({id:r.id,code:shortId(r.id,"TR"),customer:r.customer||r.customer_name||"",vehicle:r.vehicle||r.vehicle_type||"",date:dateOnly(r.date||r.pickup_at),driver:r.driver||"",status:r.status||"Scheduled",notes:r.notes||""}),
+    fromUi:o=>({customer:o.customer,vehicle:o.vehicle||null,vehicle_type:o.vehicle||null,date:o.date||null,pickup_at:o.date||null,driver:o.driver||null,status:o.status||"Scheduled",notes:o.notes||null})},
+  visas: {table:"visa_cases", singular:"Visa Application", order:"created_at",
+    toUi:r=>({id:r.id,code:shortId(r.id,"VISA"),applicant:r.applicant||r.passport_name||"",country:r.country||"",type:r.type||"",submitted:dateOnly(r.submitted||r.created_at),status:r.status||r.application_status||"Documents needed",notes:r.notes||""}),
+    fromUi:o=>({applicant:o.applicant,passport_name:o.applicant,country:o.country||null,type:o.type||null,submitted:o.submitted||null,status:o.status||"Documents needed",application_status:o.status||"Documents needed",notes:o.notes||null})},
+  tours: {table:"tours", singular:"Tour", order:"created_at",
+    toUi:r=>({id:r.id,code:shortId(r.id,"TOUR"),name:r.name||"",destination:r.destination||"",date:dateOnly(r.start_date),capacity:r.capacity||0,status:r.status||"Planned",description:r.description||""}),
+    fromUi:o=>({name:o.name,destination:o.destination||null,start_date:o.date||null,capacity:Number(o.capacity||0),status:o.status||"Planned",description:o.description||null})},
+  payments: {table:"payments", singular:"Payment", order:"created_at",
+    toUi:r=>({id:r.id,code:shortId(r.id,"PAY"),reference:r.reference||r.reference_number||"",customer:r.customer||r.customer_name||"",amount:r.amount||0,due:dateOnly(r.due||r.payment_date),status:r.status||"Pending",notes:r.notes||""}),
+    fromUi:o=>({reference:o.reference||null,reference_number:o.reference||null,customer:o.customer||null,amount:Number(o.amount||0),due:o.due||null,payment_date:o.due||null,status:o.status||"Pending",notes:o.notes||null})},
+  staff: {table:"profiles", singular:"Staff Member", order:"created_at",
+    toUi:r=>({id:r.id,name:r.full_name||r.name||"",email:r.email||"",role:String(r.role||"staff").replace("_"," ").replace(/\b\w/g,m=>m.toUpperCase()),lastactive:dateOnly(r.lastactive||r.created_at),status:r.active===false||String(r.status||"").toLowerCase()==="inactive"?"Inactive":"Active"}),
+    fromUi:o=>({full_name:o.name,role:String(o.role||"Staff").toLowerCase().replaceAll(" ","_"),active:o.status==="Active",status:o.status||"Active"})},
+  "website-content": {table:"website_content", singular:"Content Item", order:"updated_at",
+    toUi:r=>({id:r.id,code:shortId(r.id,"WEB"),page:r.page_key||r.page||"",title:r.title||"",content:r.content||"",updated:dateOnly(r.updated_at||r.updated),by:r.updated_by||r.by||"",status:r.status||"Draft"}),
+    fromUi:o=>({page_key:o.page,title:o.title,content:o.content||null,status:o.status||"Draft"})}
 };
 const $=(s,r=document)=>r.querySelector(s);
 const $$=(s,r=document)=>[...r.querySelectorAll(s)];
@@ -179,16 +179,10 @@ function openForm(row={}){
 }
 function closeForm(){$("#record-modal")?.classList.remove("open");$("#record-modal")?.setAttribute("aria-hidden","true")}
 async function writeWithSchemaFallback(builderFactory,payload){
-  let working={...payload};
-  for(let attempt=0;attempt<12;attempt++){
-    const {error}=await builderFactory(working);
-    if(!error)return {error:null};
-    const msg=String(error.message||"");
-    const m=msg.match(/column\s+[\"']?([A-Za-z0-9_]+)[\"']?\s+does not exist/i);
-    if(!m || !(m[1] in working))return {error};
-    delete working[m[1]];
-  }
-  return {error:new Error("Unable to save record because the Supabase table schema could not be reconciled.")};
+  // Never silently remove fields from a save. A schema mismatch must be fixed
+  // in Supabase so the user is not told a partial record was saved.
+  const {error}=await builderFactory(payload);
+  return {error:error||null};
 }
 async function initCrud(){
   const page=document.body.dataset.page; const cfg=PAGE_MAP[page]; if(!cfg)return;
