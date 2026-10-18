@@ -179,16 +179,10 @@ function openForm(row={}){
 }
 function closeForm(){$("#record-modal")?.classList.remove("open");$("#record-modal")?.setAttribute("aria-hidden","true")}
 async function writeWithSchemaFallback(builderFactory,payload){
-  let working={...payload};
-  for(let attempt=0;attempt<12;attempt++){
-    const {error}=await builderFactory(working);
-    if(!error)return {error:null};
-    const msg=String(error.message||"");
-    const m=msg.match(/column\s+[\"']?([A-Za-z0-9_]+)[\"']?\s+does not exist/i);
-    if(!m || !(m[1] in working))return {error};
-    delete working[m[1]];
-  }
-  return {error:new Error("Unable to save record because the Supabase table schema could not be reconciled.")};
+  // Never silently remove fields from a save. A schema mismatch must be fixed
+  // in Supabase so the user is not told a partial record was saved.
+  const {error}=await builderFactory(payload);
+  return {error:error||null};
 }
 async function initCrud(){
   const page=document.body.dataset.page; const cfg=PAGE_MAP[page]; if(!cfg)return;
