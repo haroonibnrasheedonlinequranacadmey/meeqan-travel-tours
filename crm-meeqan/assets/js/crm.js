@@ -210,15 +210,35 @@ async function initCrud(){
   if(!canWrite(page))$("#add-record")?.setAttribute("disabled","true");
 }
 async function initDashboard(){
-  const counts=await Promise.all([
-    supabaseClient.from("customers").select("id",{count:"exact",head:true}),
-    supabaseClient.from("bookings").select("id",{count:"exact",head:true}).in("status",["Pending","Confirmed"]),
-    supabaseClient.from("inquiries").select("id",{count:"exact",head:true}).neq("status","Closed"),
-    supabaseClient.from("payments").select("id",{count:"exact",head:true}).eq("status","Pending")
-  ]);
+  const resources=[
+    ["customers","Total Customers","♙"],
+    ["bookings","Total Bookings","▣"],
+    ["inquiries","Total Inquiries","✉"],
+    ["payments","Total Payments","＄"],
+    ["packages","Total Packages","◇"],
+    ["hotels","Total Hotels","⌂"],
+    ["flight_records","Total Flights","✈"],
+    ["transport_jobs","Total Transport","⇄"],
+    ["visa_applications","Total Visas","▤"],
+    ["tours","Total Tours","◎"]
+  ];
+  const results=await Promise.all(resources.map(([table])=>supabaseClient.from(table).select("id",{count:"exact",head:true})));
+  const failed=results.find(r=>r.error);
   const box=$("#dashboard-stats");if(!box)return;
-  const vals=counts.map(x=>x.count??0);
-  box.innerHTML=[["Total Customers",vals[0],"♙"],["Active Bookings",vals[1],"▣"],["Open Inquiries",vals[2],"✉"],["Pending Payments",vals[3],"＄"]].map(s=>`<div class="stat"><div class="stat-top"><span>${s[0]}</span><span class="stat-icon">${s[2]}</span></div><strong>${s[1]}</strong><small>Live Supabase data</small></div>`).join("");
+  if(failed?.error)toast(failed.error.message||"Unable to load one or more dashboard counts.",true);
+  box.innerHTML=resources.map(([table,label,icon],i)=>{
+    const result=results[i];
+    const value=result.error?0:(result.count??0);
+    return `<div class="stat"><div class="stat-top"><span>${label}</span><span class="stat-icon">${icon}</span></div><strong>${value}</strong><small>Live Supabase data</small></div>`;
+  }).join("");
+}
+
+function startDashboardAutoRefresh(){
+  if(document.body.dataset.page!=="dashboard")return;
+  const refresh=()=>{if(document.visibilityState==="visible")initDashboard().catch(e=>toast(e.message||"Dashboard refresh failed.",true));};
+  window.addEventListener("focus",refresh);
+  document.addEventListener("visibilitychange",refresh);
+  setInterval(refresh,10000);
 }
 async function initNotifications(){
   const {data,error}=await supabaseClient.from("notifications").select("id,title,body,category,is_read,created_at").order("created_at",{ascending:false}).limit(50);
@@ -278,7 +298,7 @@ async function initSettings(){
 async function initPage(){
   const page=document.body.dataset.page;
   setupLayout();
-  if(page==="dashboard")return initDashboard();
+  if(page==="dashboard"){const result=await initDashboard();startDashboardAutoRefresh();return result;}
   if(page==="notifications")return initNotifications();
   if(page==="reports")return initReports();
   if(page==="settings")return initSettings();
