@@ -17,7 +17,7 @@ const PAGE_MAP = {
     fromUi:o=>({full_name:o.name,email:o.email||null,phone:o.phone||null,country:o.country||null,status:o.status||"Active",notes:o.notes||null})},
   inquiries: {table:"inquiries", singular:"Inquiry", order:"created_at",
     toUi:r=>({id:r.id,code:r.lead_code||shortId(r.id,"LD"),name:r.customer_name||r.full_name||r.name||"",contact:r.phone||r.contact||r.email||"",interest:r.service_type||r.interest||r.message||"",followup:dateOnly(r.follow_up_at||r.followup),status:r.status||"New",notes:r.message||r.notes||""}),
-    fromUi:o=>({customer_name:o.name||"Unknown",full_name:o.name||null,name:o.name||null,phone:o.contact||null,contact:o.contact||null,service_type:o.interest||"Umrah",interest:o.interest||null,follow_up_at:o.followup||null,followup:o.followup||null,message:o.notes||null,status:o.status||"new"})},
+    fromUi:o=>({customer_name:o.name||"Unknown",name:o.name||null,phone:o.contact||null,contact:o.contact||null,service_type:o.interest||"Umrah",interest:o.interest||null,follow_up_at:o.followup||null,followup:o.followup||null,message:o.notes||null,status:o.status||"new"})},
   bookings: {table:"bookings", singular:"Booking", order:"created_at",
     toUi:r=>({id:r.id,code:r.booking_number||r.booking_code||shortId(r.id,"BK"),customer:r.customer||r.customer_name||"",service:r.service_type||r.service||"Umrah",date:dateOnly(r.travel_date||r.date),amount:Number(r.total_amount??r.amount??0),status:r.status||"pending",notes:r.notes||""}),
     fromUi:o=>({customer:o.customer||null,service:o.service||null,service_type:o.service||"Umrah",travel_date:o.date||null,date:o.date||null,total_amount:Number(o.amount||0),amount:Number(o.amount||0),status:o.status||"pending",notes:o.notes||null})},
@@ -233,9 +233,9 @@ async function initDashboard(){
     ["payments","Total Payments","＄"],
     ["packages","Total Packages","◇"],
     ["hotels","Total Hotels","⌂"],
-    ["flight_records","Total Flights","✈"],
-    ["transport_jobs","Total Transport","⇄"],
-    ["visa_applications","Total Visas","▤"],
+    ["flight_requests","Total Flights","✈"],
+    ["transport_requests","Total Transport","⇄"],
+    ["visa_cases","Total Visas","▤"],
     ["tours","Total Tours","◎"]
   ];
   const results=await Promise.all(resources.map(([table])=>supabaseClient.from(table).select("id",{count:"exact",head:true})));
@@ -272,7 +272,7 @@ async function initReports(){
     supabaseClient.from("payments").select("*"),
     supabaseClient.from("bookings").select("*"),
     supabaseClient.from("inquiries").select("*"),
-    supabaseClient.from("visa_applications").select("*")
+    supabaseClient.from("visa_cases").select("*")
   ]);
   const revenue=(payments.data||[]).filter(p=>p.status==="Paid").reduce((s,p)=>s+Number(p.amount||0),0);
   const outstanding=(payments.data||[]).filter(p=>p.status==="Pending"||p.status==="Overdue").reduce((s,p)=>s+Number(p.amount||0),0);
