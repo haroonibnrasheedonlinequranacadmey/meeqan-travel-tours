@@ -62,7 +62,7 @@
 <script src="assets/js/main.js"></script>
 <script>
 const SUPABASE_URL='https://jrzxymykwcelpxxkbwlz.supabase.co';
-const SUPABASE_PUBLISHABLE_KEY='sb_publishable_5-EyFGXY_lQqESbHGVnUUw_EHsW56l';
+const SUPABASE_PUBLISHABLE_KEY='sb_publishable_5-EyFGXY_lQqESbHGVnUUw_EHsW56lh';
 const supabaseClient=window.supabase.createClient(SUPABASE_URL,SUPABASE_PUBLISHABLE_KEY);
 document.getElementById('year').textContent = new Date().getFullYear();
 const loginForm=document.getElementById('crmLoginForm');
@@ -117,5 +117,5 @@ loginForm.addEventListener('submit', async function(event){
 });
 supabaseClient.auth.onAuthStateChange((event)=>{ if(event==='PASSWORD_RECOVERY') showNewPassword(); });
 if(new URLSearchParams(window.location.hash.replace(/^#/, '')).get('type')==='recovery') showNewPassword();
-</script>
+</script></script>
 </body></html>
