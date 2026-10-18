@@ -8,6 +8,7 @@
 <title>CRM Login | Meeqan Travel & Tours</title>
 <link rel="icon" type="image/svg+xml" href="assets/images/meeqan-mark.svg">
 <link rel="stylesheet" href="assets/css/style.css">
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <style>
 .crm-wrap{min-height:65vh;display:grid;place-items:center;padding:56px 18px;background:linear-gradient(135deg,#f4f8f6,#fff)}
 .crm-card{width:min(100%,480px);background:#fff;border:1px solid #dce7e2;border-radius:22px;padding:clamp(24px,5vw,42px);box-shadow:0 18px 55px rgba(7,59,54,.12)}
@@ -36,31 +37,36 @@
 <main class="crm-wrap"><section class="crm-card">
 <p class="eyebrow">TEAM ACCESS</p><h1>Meeqan CRM Login</h1>
 <p>Sign in to open the Meeqan CRM workspace.</p>
-<div class="crm-note"><strong>Secure CRM access</strong><br>Sign in with your Supabase account. Only authorized CRM users can enter.</div>
+<div class="crm-note"><strong>Secure CRM access</strong><br>Sign in with your Supabase CRM account.</div>
 <form id="crmLoginForm">
 <label for="username">Work email or username</label><input id="username" name="username" autocomplete="username" required>
 <label for="password">Password</label><input id="password" name="password" type="password" autocomplete="current-password" required>
 <p class="crm-error" id="loginError" role="alert" aria-live="polite"></p>
 <button type="submit">Login to Meeqan CRM</button>
 </form>
-<p class="crm-warning">Your account and CRM permissions are verified securely through Supabase.</p>
-<button type="button" id="forgotPasswordBtn" style="margin-top:10px;background:transparent;color:#073b36;border:1px solid #cbd9d3">Forgot password?</button>
-<div id="resetPanel" style="display:none;margin-top:18px;padding-top:18px;border-top:1px solid #dce7e2">
-<label for="resetPassword">New password</label><input id="resetPassword" type="password" autocomplete="new-password" minlength="6">
-<label for="resetPassword2">Confirm new password</label><input id="resetPassword2" type="password" autocomplete="new-password" minlength="6">
-<p class="crm-error" id="resetError" role="alert" aria-live="polite"></p>
-<button type="button" id="savePasswordBtn">Set new password</button>
-</div>
+<p class="crm-warning">Authorized staff only. Your Supabase account must have an active CRM profile.</p>
 </section></main><footer class="site-footer"><div class="container footer-bottom"><span>© <span id="year"></span> Meeqan Travel &amp; Tours</span><a href="index.html">Back to website</a></div></footer>
 <script src="assets/js/main.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script><script>
-const SUPABASE_URL='https://jrzxymykwcelpxxkbwlz.supabase.co'; const SUPABASE_KEY='sb_publishable_5-EyFGXY_lQqESbHGVnUUw_EHsW56l'; const sb=supabase.createClient(SUPABASE_URL,SUPABASE_KEY);
-document.getElementById('year').textContent=new Date().getFullYear(); const form=document.getElementById('crmLoginForm'); const err=document.getElementById('loginError');
-const resetPanel=document.getElementById('resetPanel'); const resetError=document.getElementById('resetError');
-function showRecovery(){resetPanel.style.display='block';form.style.display='none';document.getElementById('forgotPasswordBtn').style.display='none';}
-async function checkRecovery(){const h=window.location.hash||''; if(h.includes('type=recovery')) showRecovery();}
-checkRecovery();
-form.addEventListener('submit',async e=>{e.preventDefault();const username=document.getElementById('username').value.trim();const password=document.getElementById('password').value;err.textContent='';const email=username.toLowerCase()==='meeqanadmin'?'ma9072807@gmail.com':username;if(!email||!password){err.textContent='Enter your username and password.';return;}const {data,error}=await sb.auth.signInWithPassword({email,password});if(error){err.textContent=error.message;return;}const {data:profile,error:pe}=await sb.from('profiles').select('id,full_name,email,role,active').eq('id',data.user.id).single();if(pe||!profile){await sb.auth.signOut();err.textContent='CRM profile was not found for this account.';return;}if(!profile.active||!['admin','staff'].includes(profile.role)){await sb.auth.signOut();err.textContent='Your account is not authorized to access the CRM.';return;}sessionStorage.setItem('meeqan-crm-session','supabase');sessionStorage.setItem('meeqan-crm-user',profile.email||email);location.href='crm-meeqan/dashboard.html';});
-document.getElementById('forgotPasswordBtn').addEventListener('click',async()=>{err.textContent='';const input=document.getElementById('username').value.trim();const email=input.toLowerCase()==='meeqanadmin'?'ma9072807@gmail.com':input;if(!email||!email.includes('@')){err.textContent='Enter your work email first, then click Forgot password.';return;}const redirectTo=window.location.href.split('#')[0];const {error}=await sb.auth.resetPasswordForEmail(email,{redirectTo});if(error){err.textContent=error.message;return;}err.style.color='#0b6b4f';err.textContent='Password reset email sent. Check your inbox.';});
-document.getElementById('savePasswordBtn').addEventListener('click',async()=>{resetError.textContent='';const a=document.getElementById('resetPassword').value,b=document.getElementById('resetPassword2').value;if(a.length<6){resetError.textContent='Password must be at least 6 characters.';return}if(a!==b){resetError.textContent='Passwords do not match.';return}const {error}=await sb.auth.updateUser({password:a});if(error){resetError.textContent=error.message;return}await sb.auth.signOut();resetError.style.color='#0b6b4f';resetError.textContent='Password changed successfully. You can now sign in.';setTimeout(()=>{window.location.href=window.location.href.split('#')[0]},1200);});
-</script></body></html>
+<script>
+const SUPABASE_URL='https://jrzxymykwcelpxxkbwlz.supabase.co';
+const SUPABASE_PUBLISHABLE_KEY='sb_publishable_5-EyFGXY_lQqESbHGVnUUw_EHsW56lh';
+const supabaseClient=window.supabase.createClient(SUPABASE_URL,SUPABASE_PUBLISHABLE_KEY);
+document.getElementById('year').textContent = new Date().getFullYear();
+document.getElementById('crmLoginForm').addEventListener('submit', async function(event){
+ event.preventDefault();
+ const username=document.getElementById('username').value.trim();
+ const password=document.getElementById('password').value;
+ const errorBox=document.getElementById('loginError');
+ errorBox.textContent='';
+ if(!username || !password){ errorBox.textContent='Enter your email and password.'; return; }
+ const button=this.querySelector('button'); button.disabled=true;
+ const {data,error}=await supabaseClient.auth.signInWithPassword({email:username,password});
+ button.disabled=false;
+ if(error){ errorBox.textContent=error.message || 'Login failed.'; return; }
+ const {data:profile,error:profileError}=await supabaseClient.from('profiles').select('id,role,active').eq('id',data.user.id).maybeSingle();
+ if(profileError || !profile){ await supabaseClient.auth.signOut(); errorBox.textContent='Your CRM profile is not configured. Contact the administrator.'; return; }
+ if(profile.active===false){ await supabaseClient.auth.signOut(); errorBox.textContent='Your CRM account is inactive.'; return; }
+ window.location.href='crm-meeqan/dashboard.html';
+});
+</script>
+</body></html>
