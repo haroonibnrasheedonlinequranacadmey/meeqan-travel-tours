@@ -29,7 +29,7 @@ const PAGE_MAP = {
     fromUi:o=>({name:o.name,city:o.city||"Not specified",country:o.country||null,contact:o.contact||null,phone:o.contact||null,status:o.status||"Active",active:o.status!=="Inactive",notes:o.notes||null})},
   flights: {table:"flight_requests", singular:"Flight Request", order:"created_at",
     toUi:r=>({id:r.id,code:shortId(r.id,"FLT"),customer:r.customer||r.customer_name||"",route:r.route||[r.origin,r.destination].filter(Boolean).join(" → "),date:dateOnly(r.date||r.departure_date),pnr:r.pnr||r.reference_number||"",status:r.status||"requested",notes:r.notes||""}),
-    fromUi:o=>({customer:o.customer||null,route:o.route||null,date:o.date||null,departure_date:o.date||null,pnr:o.pnr||null,reference_number:o.pnr||null,status:String(o.status||"Requested").trim(),notes:o.notes||null,passengers:1})},
+    fromUi:o=>({customer:o.customer||null,route:o.route||null,date:o.date||null,departure_date:o.date||null,pnr:o.pnr||null,reference_number:o.pnr||null,status:({requested:"requested",quoted:"quoted",booked:"booked",ticketed:"ticketed",cancelled:"cancelled",canceled:"cancelled"})[String(o.status||"Requested").trim().toLowerCase()]||"requested",notes:o.notes||null,passengers:1})},
   transport: {table:"transport_requests", singular:"Transport Request", order:"created_at",
     toUi:r=>({id:r.id,code:shortId(r.id,"TR"),customer:r.customer||r.customer_name||"",vehicle:r.vehicle||r.vehicle_type||"",date:dateOnly(r.date||r.pickup_at),driver:r.driver||"",status:r.status||"requested",notes:r.notes||""}),
     fromUi:o=>({customer:o.customer||null,vehicle:o.vehicle||null,vehicle_type:o.vehicle||null,date:o.date||null,pickup_at:o.date||null,driver:o.driver||null,status:o.status||"requested",notes:o.notes||null,passengers:1})},
